@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextView.Menu.Active" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">@font/font_bold</item>
+    </style>
+    <style name="TextView.Menu.InActive" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">@font/font_regular</item>
+    </style>
+
+</resources>

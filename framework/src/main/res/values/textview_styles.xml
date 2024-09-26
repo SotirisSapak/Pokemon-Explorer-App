@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextView.Header" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@font/font_black</item>
+        <item name="android:textColor">?colorPrimary</item>
+    </style>
+    <style name="TextView.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/font_regular</item>
+    </style>
+
+</resources>

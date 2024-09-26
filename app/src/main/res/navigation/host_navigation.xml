@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/host_navigation"
+    app:startDestination="@id/action_home">
+
+    <fragment
+        android:id="@+id/action_home"
+        android:name="com.sotirisapak.apps.pokemonexplorer.views.home.HomeFragment"
+        android:label="HomeFragment" />
+    <fragment
+        android:id="@+id/action_favorites"
+        android:name="com.sotirisapak.apps.pokemonexplorer.views.favorites.FavoritesFragment"
+        android:label="FavoritesFragment" />
+</navigation>

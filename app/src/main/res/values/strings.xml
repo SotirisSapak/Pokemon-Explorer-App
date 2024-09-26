@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Pokemon Explorer App</string>
+
+
+    <!-- Region Menu option titles -->
+    <string name="menu_title_home">Home</string>
+    <string name="menu_title_favorites">Favourites</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- End Menu option titles -->
+
 </resources>

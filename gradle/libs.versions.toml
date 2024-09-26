@@ -1,16 +1,55 @@
+# * ================================================================================================
+# * Schematic versioning system  (1.0)
+# * ================================================================================================
+
+# ? ================================================================================================
 [versions]
+# ? ================================================================================================
+
+# ? ------------------------------------------------------------------------------------------------
+# ? Default global attributes
+# ? ------------------------------------------------------------------------------------------------
+java = "17"                                                 # The java version to use
+sdk-min = "28"                                              # The minimum supported android vers.   (android 9.0)
+sdk-target = "34"                                           # The target android vers.              (android 14)
+# ? ------------------------------------------------------------------------------------------------
+# ? Application specific versions
+# ? ------------------------------------------------------------------------------------------------
+application-revision = "1"                                  # The update counter
+application-version = "1.0.0"                               # The application schematic version
+# ? ------------------------------------------------------------------------------------------------
+# ? Other libraries
+# ? ------------------------------------------------------------------------------------------------
 agp = "8.5.2"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+kotlin = "2.0.0"                                            # The language version
+coreKtx = "1.13.1"                                          # The language core features
+constraintlayout = "2.1.4"                                  # To support constraint layout
+appcompat = "1.7.0"                                         # AppCompat library
+material = "1.12.0"                                         # Material design library
+activity = "1.9.2"                                          # Standard activity library
+kotlin-reflection = "2.0.0"                                 # Reflection library
+lifecycle = "2.8.6"                                         # LiveData and lifecycle components
+kotlinx-coroutines = "1.8.1"                                # Coroutines library
+navigation-fragment-ktx = "2.8.1"                           # Fragment support for navigation component
+androidx-fragment-ktx = "1.8.3"                             # Master fragment library
+swiperefreshlayout = "1.1.0"                                # SwipeRefreshLayout component library
+lottie = "6.4.1"                                            # Lottie animation library
+dotLottie = "0.3.0"                                         # Lottie animation library for dotlottie files
+retrofit = "2.11.0"                                         # HTTP request library for abstraction
+retrofit-converter-json = "2.11.0"                          # Retrofit json converter library
+room = "2.6.1"                                              # Local database api (Room SQLite based)
+# ? ------------------------------------------------------------------------------------------------
+# ? Testing libraries
+# ? ------------------------------------------------------------------------------------------------
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-appcompat = "1.7.0"
-material = "1.12.0"
-activity = "1.9.2"
-constraintlayout = "2.1.4"
+# ? ================================================================================================
 
+
+# ? ================================================================================================
 [libraries]
+# ? ================================================================================================
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -19,8 +58,29 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+kotlin-reflection = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin-reflection"}
+livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+coroutines-android-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
+navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-fragment-ktx" }
+fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidx-fragment-ktx" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+dotLottie = { group = "com.github.LottieFiles", name = "dotlottie-android", version.ref = "dotLottie" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-json = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit-converter-json" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+# ? ================================================================================================
 
+
+# ? ================================================================================================
 [plugins]
+# ? ================================================================================================
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }

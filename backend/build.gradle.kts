@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "$libraryPkg.di"
+    namespace = "$libraryPkg.backend"
     compileSdk = libs.versions.sdk.target.get().toInt()
 
     defaultConfig {
@@ -35,15 +35,12 @@ android {
 }
 
 dependencies {
-
     // ? Android core features
     implementation(libs.androidx.core.ktx)
     // ? Android appCompat support
     implementation(libs.androidx.appcompat)
     // ? Material library
     implementation(libs.material)
-    // ? ViewModel support
-    implementation(libs.viewmodel.ktx)
     // ? Retrofit library for HTTP request abstraction
     implementation(libs.retrofit)
     // ? Retrofit JSON converter library
@@ -54,7 +51,7 @@ dependencies {
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.room.compiler)    // not using KSP due to lack of dataBinding support
     // ? Local libraries dependencies
-    implementation(project(":backend"))
+    implementation(project(":core"))
     // ? Testing libraries
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
