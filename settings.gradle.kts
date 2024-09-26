@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Pokemon Explorer App"
 include(":app")
- 
+include(":core")
+include(":framework")
+include(":di")
