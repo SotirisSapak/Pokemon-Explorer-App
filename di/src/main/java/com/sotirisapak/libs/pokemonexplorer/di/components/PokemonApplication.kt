@@ -3,7 +3,8 @@ package com.sotirisapak.libs.pokemonexplorer.di.components
 import android.app.Application
 import com.google.android.material.color.DynamicColors
 import com.sotirisapak.libs.pokemonexplorer.backend.PokemonApi
-import com.sotirisapak.libs.pokemonexplorer.backend.remote.TypeRepository
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.PokemonService
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.TypeService
 import retrofit2.Retrofit
 
 /**
@@ -14,7 +15,8 @@ import retrofit2.Retrofit
 class PokemonApplication: Application() {
 
     private lateinit var retrofit: Retrofit
-    private lateinit var typeRepository: TypeRepository
+    private lateinit var typeService: TypeService
+    private lateinit var pokemonService: PokemonService
 
     /**
      * Initialize all dependencies here when application is about to be created
@@ -25,10 +27,12 @@ class PokemonApplication: Application() {
         DynamicColors.applyToActivitiesIfAvailable(this)
         // init retrofit instance
         retrofit = PokemonApi.instance
-        // initialize all repositories
-        typeRepository = TypeRepository(retrofit)
+        // initialize all services
+        typeService = TypeService(retrofit)
+        pokemonService = PokemonService(retrofit)
     }
 
-    fun getTypeRepository() = typeRepository
+    fun getTypeService() = typeService
+    fun getPokemonService() = pokemonService
 
 }

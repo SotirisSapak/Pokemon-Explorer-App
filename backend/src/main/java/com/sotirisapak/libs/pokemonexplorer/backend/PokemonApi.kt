@@ -11,13 +11,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 object PokemonApi {
 
     /** The standard url for the api endpoint */
-    const val apiEndpoint = "https://pokeapi.co/api/v2/"
+    private const val API_BASE_ENDPOINT = "https://pokeapi.co/api/v2/"
 
     /** The api instance */
     val instance: Retrofit by lazy {
         Retrofit
             .Builder()
-            .baseUrl(apiEndpoint)
+            .baseUrl(API_BASE_ENDPOINT)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

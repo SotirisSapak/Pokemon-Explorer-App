@@ -84,7 +84,12 @@ class TypeAdapter(
     private fun onItemClick(binding: RvItemTypeBinding, item: Type) {
         // when this card clicked, then assign all items the isEnabled property to false, and this
         // item to true
-        for(listItem in this.currentList) listItem.isSelected = false
+        for(listItem in this.currentList) {
+            if(listItem.isSelected) {
+                listItem.isSelected = false
+                
+            }
+        }
         item.isSelected = true
         onTypeSelection.invoke(binding, item)
         notifyDataSetChanged()
