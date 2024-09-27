@@ -7,6 +7,12 @@ import android.view.ViewGroup
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentFavoritesBinding
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 
+/**
+ * Framework to provide an interface to user to manipulate their favorite pokemon offline. This object
+ * will be saved into local database via room and fetched within a standard dao interface
+ * @author SotirisSapak
+ * @since 1.0.0
+ */
 class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
 
     /**

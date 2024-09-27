@@ -50,7 +50,7 @@ class TypeAdapter(
      * View related method to adjust the layout state bases on if current item is selected or not.
      * We do this in order to create a selectable item list
      * @param binding the item binding property
-     * @param item the current binding item to  objectcheck if is selected or not. [Type.isSelected]
+     * @param item the current binding item to  object check if is selected or not. [Type.isSelected]
      * @author SotirisSapak
      * @since 1.0.0
      */
@@ -76,7 +76,7 @@ class TypeAdapter(
      * Some actions are been invoked when item is click so i decided to group these commands into a
      * single method!
      * @param binding the item binding property
-     * @param the current binding item object
+     * @param item current binding item object
      * @author SotirisSapak
      * @since 1.0.0
      */

@@ -1,11 +1,15 @@
 package com.sotirisapak.apps.pokemonexplorer.views.home
 
+import android.util.Log
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sotirisapak.apps.pokemonexplorer.adapters.TypeAdapter
 import com.sotirisapak.apps.pokemonexplorer.models.Type
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.TypeRepository
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
+import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
 
 /**
  * ViewModel implementation for [HomeFragment]
@@ -13,7 +17,8 @@ import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
  * @since 1.0.0
  */
 class HomeViewModel(
-    private val hostViewModel: HostViewModel
+    private val hostViewModel: HostViewModel,
+    private val typeRepository: TypeRepository
 ): ViewModelBase() {
 
     /**
@@ -24,7 +29,7 @@ class HomeViewModel(
     inner class Adapters {
 
         val typeAdapter = TypeAdapter { bind, selectedType ->
-
+            getApi(selectedType)
         }
 
 
@@ -47,11 +52,30 @@ class HomeViewModel(
         adapters.typeAdapter.submitList(arrayOfTypes)
     }
 
+
+    private fun getApi(selectedType: Type) = newBackgroundJob {
+        val response = typeRepository.getTypeById(selectedType.id)
+        Log.d("getApi", response.toString())
+        if(response.isSuccessful) {
+            Log.d("getApi", response.body().toString())
+            getPokemon(response.body()!!.pokemon[0].pokemon.url)
+        } else {
+            Log.e("getApi", response.errorBody().toString())
+        }
+    }
+
+    private fun getPokemon(url: String) = newBackgroundJob {
+        val response = typeRepository.getPokemonByUrl(url)
+        Log.d("getPokemon", response.toString())
+    }
+
     companion object {
 
         fun factory(host: HostViewModel) = viewModelFactory {
             initializer {
-                HomeViewModel(host)
+                val application = (this[APPLICATION_KEY] as PokemonApplication)
+                val repository = application.getTypeRepository()
+                HomeViewModel(host, repository)
             }
         }
 

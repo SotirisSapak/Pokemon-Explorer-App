@@ -20,7 +20,7 @@ application-version = "1.0.0"                               # The application sc
 # ? ------------------------------------------------------------------------------------------------
 # ? Other libraries
 # ? ------------------------------------------------------------------------------------------------
-agp = "8.5.2"
+agp = "8.6.1"
 kotlin = "2.0.0"                                            # The language version
 coreKtx = "1.13.1"                                          # The language core features
 constraintlayout = "2.1.4"                                  # To support constraint layout
