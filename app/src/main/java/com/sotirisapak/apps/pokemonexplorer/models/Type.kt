@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.DiffUtil
  * @since 1.0.0
  */
 data class Type(
-    var id: Int,
-    var name: String,
+    var id: Int = -1,
+    var name: String = "",
     var isSelected: Boolean = false
 ) {
     companion object DiffCallback : DiffUtil.ItemCallback<Type>() {

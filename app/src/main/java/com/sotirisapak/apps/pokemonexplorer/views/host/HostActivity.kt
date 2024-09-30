@@ -22,9 +22,6 @@ class HostActivity : ActivityBase<ActivityHostBinding>() {
     /** The viewModel instance */
     private val hostViewModel: HostViewModel by viewModels { HostViewModel.factory }
 
-    /** Public navController to provide navigation with bottomNavigationView component */
-    private lateinit var navController: NavController
-
     /**
      * You have to inflate your dataBinding class as below:
      *
@@ -80,18 +77,6 @@ class HostActivity : ActivityBase<ActivityHostBinding>() {
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override fun onCreation(savedInstanceState: Bundle?) {
-        // ------------ initializers ------------
-        initializeBottomNavigationView()
-    }
-
-    // ? ==========================================================================================
-    // ? Initializers
-    // ? ==========================================================================================
-    private fun initializeBottomNavigationView() {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        navController = navHostFragment.findNavController()
-        binding.bottomNavigationView.setupWithNavController(navController)
-    }
+    override fun onCreation(savedInstanceState: Bundle?) { /* nothing to attach */ }
 
 }

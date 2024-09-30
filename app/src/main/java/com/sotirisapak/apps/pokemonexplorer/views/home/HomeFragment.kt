@@ -3,12 +3,19 @@ package com.sotirisapak.apps.pokemonexplorer.views.home
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.sotirisapak.apps.pokemonexplorer.R
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentHomeBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
+import com.sotirisapak.libs.pokemonexplorer.core.app.observe
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
+import com.sotirisapak.libs.pokemonexplorer.framework.bottomRoundedInsets
 import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
 
 /**
@@ -94,6 +101,12 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     ) {
         // ? ------------ Utilities ------------
         attachLayoutInsets()
+        // ? ------------ Observers ------------
+        observerForProceed()
+        // ? ------------ Listeners ------------
+        binding.nestedScrollViewContent.setOnScrollChangeListener(onScrollListener)
+        binding.buttonErrorRefresh.setOnClickListener(onErrorRefreshListener)
+        binding.buttonFavorites.setOnClickListener(onFavoriteClick)
     }
 
     /**
@@ -112,6 +125,34 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     // ? ==========================================================================================
     private fun attachLayoutInsets() {
         binding.layoutHeader.topRoundedInsets()
+        binding.layoutContainerLinear.bottomRoundedInsets()
+    }
+
+
+    // ? ==========================================================================================
+    // ? Observers
+    // ? ==========================================================================================
+    private fun observerForProceed() = observe(viewModel.properties.proceed) {
+        if(it) {
+            findNavController().navigate(R.id.actionHomeToPreview)
+            // clear the property
+            viewModel.properties.proceed.clear()
+        }
+    }
+
+    // ? ==========================================================================================
+    // ? Listeners
+    // ? ==========================================================================================
+    private val onScrollListener = NestedScrollView.OnScrollChangeListener {
+        v: NestedScrollView, _: Int, scrollY: Int, _: Int, _: Int ->
+        // on scroll change we are checking when users scroll at bottom.
+        if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
+            viewModel.loadMoreData()
+        }
+    }
+    private val onErrorRefreshListener = View.OnClickListener { viewModel.refresh() }
+    private val onFavoriteClick = View.OnClickListener {
+        findNavController().navigate(R.id.action_homeToFavorites)
     }
 
 }

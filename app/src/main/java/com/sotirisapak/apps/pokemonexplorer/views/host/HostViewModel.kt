@@ -2,6 +2,7 @@ package com.sotirisapak.apps.pokemonexplorer.views.host
 
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 
 /**
@@ -11,7 +12,7 @@ import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
  */
 class HostViewModel: ViewModelBase() {
 
-
+    var selectedPokemon = Pokemon()
 
 
 

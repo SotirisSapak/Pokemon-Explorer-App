@@ -1,20 +1,22 @@
-package com.sotirisapak.apps.pokemonexplorer.views.favorites
+package com.sotirisapak.apps.pokemonexplorer.views.preview
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentFavoritesBinding
+import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentPreviewBinding
+import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 
-/**
- * Framework to provide an interface to user to manipulate their favorite pokemon offline. This object
- * will be saved into local database via room and fetched within a standard dao interface
- * @author SotirisSapak
- * @since 1.0.0
- */
-class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
+class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
+
+    /** ViewModel instance from host activity to bind shared properties */
+    private val hostViewModel: HostViewModel by activityViewModels()
+
+    /** ViewModel instance for this fragment */
+    private val viewModel: PreviewViewModel by viewModels { PreviewViewModel.factory(hostViewModel) }
 
     /**
      * You have to inflate your dataBinding class as below:
@@ -27,7 +29,7 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override fun inflate(inflater: LayoutInflater) = FragmentFavoritesBinding.inflate(inflater)
+    override fun inflate(inflater: LayoutInflater) = FragmentPreviewBinding.inflate(inflater)
 
     /**
      * Attach any binding properties. This method will be called before
@@ -56,6 +58,7 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
      */
     override fun attach() {
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
     }
 
     /**
@@ -63,7 +66,7 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override fun onCreation() { /* nothing to attach */ }
+    override fun onCreation() {}
 
     /**
      * Override the [Fragment.onCreateView] method to generate our own method. Will be called after
@@ -88,8 +91,7 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
      * @since 1.0.0
      */
     override fun onBack() {
-        // at this point...back button should return to home fragment
-        findNavController().popBackStack()
+        viewModel.onBackPressed { findNavController().popBackStack() }
     }
 
 }

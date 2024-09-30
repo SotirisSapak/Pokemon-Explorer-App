@@ -27,23 +27,11 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:defaultNavHost="true"
-            app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/host_navigation"/>
-
-        <!-- Bottom navigation -->
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:itemTextAppearanceActive="@style/TextView.Menu.Active"
-            app:itemTextAppearanceInactive="@style/TextView.Menu.InActive"
-            app:menu="@menu/host_menu"
-            app:elevation="1dp"
-            app:labelVisibilityMode="labeled"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

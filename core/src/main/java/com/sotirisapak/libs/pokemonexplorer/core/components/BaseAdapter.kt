@@ -1,5 +1,6 @@
 package com.sotirisapak.libs.pokemonexplorer.core.components
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -37,7 +38,7 @@ abstract class BaseAdapter<VB: ViewBinding, T: Any>(
      * ViewHolder implementation for quick viewHolder initialization
      * @param binding the binding instance
      * @author SotirisSapak
-     * @since 0.0.3
+     * @since 1.0.0
      */
     inner class ViewHolder(private val binding: VB): RecyclerView.ViewHolder(binding.root){
 

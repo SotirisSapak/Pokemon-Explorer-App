@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    // ? Constraint layout
+    implementation(libs.androidx.constraintlayout)
     // ? Android core features
     implementation(libs.androidx.core.ktx)
     // ? Android appCompat support
@@ -76,7 +78,9 @@ dependencies {
     // ? For room database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(libs.androidx.constraintlayout)
+    // For fetching async images via web
+    implementation(libs.picasso)
+
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.room.compiler)    // not using KSP due to lack of dataBinding support
     // ? Local library dependencies

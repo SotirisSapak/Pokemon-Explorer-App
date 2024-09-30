@@ -8,5 +8,9 @@
     <style name="TextView.Body" parent="TextAppearance.Material3.BodyMedium">
         <item name="fontFamily">@font/font_regular</item>
     </style>
+    <style name="TextView.Header.Item" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/font_semibold</item>
+        <item name="android:textColor">?colorPrimary</item>
+    </style>
 
 </resources>

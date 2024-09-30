@@ -3,6 +3,7 @@ package com.sotirisapak.libs.pokemonexplorer.backend.models
 import androidx.recyclerview.widget.DiffUtil
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 /**
@@ -22,10 +23,13 @@ data class Pokemon(
     @PrimaryKey var id: Int = -1,
     var name: String = "",
     var weight: Int = 0,
-    var height: Int = 0
+    var height: Int = 0,
+    var sprites: Sprites = Sprites()
 ): Serializable {
 
-
+    data class Sprites(
+        @SerializedName("front_default") var frontDefault: String = ""
+    )
 
 
 

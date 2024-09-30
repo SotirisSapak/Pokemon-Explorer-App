@@ -38,6 +38,7 @@ dotLottie = "0.3.0"                                         # Lottie animation l
 retrofit = "2.11.0"                                         # HTTP request library for abstraction
 retrofit-converter-json = "2.11.0"                          # Retrofit json converter library
 room = "2.6.1"                                              # Local database api (Room SQLite based)
+picasso = "2.8"                                             # Image load library
 # ? ------------------------------------------------------------------------------------------------
 # ? Testing libraries
 # ? ------------------------------------------------------------------------------------------------
@@ -75,6 +76,7 @@ retrofit-converter-json = { group = "com.squareup.retrofit2", name = "converter-
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 # ? ================================================================================================
 
 
