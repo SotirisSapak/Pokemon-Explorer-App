@@ -1,6 +1,7 @@
 package com.sotirisapak.libs.pokemonexplorer.backend.models
 
 import androidx.recyclerview.widget.DiffUtil
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -24,19 +25,12 @@ data class Pokemon(
     var name: String = "",
     var weight: Int = 0,
     var height: Int = 0,
-    var sprites: Sprites = Sprites()
+    @Embedded var sprites: Sprites = Sprites()
 ): Serializable {
 
     data class Sprites(
         @SerializedName("front_default") var frontDefault: String = ""
-    )
-
-
-
-
-
-
-
+    ): Serializable
 
     companion object DiffCallback : DiffUtil.ItemCallback<Pokemon>() {
         override fun areItemsTheSame(oldItem: Pokemon, newItem: Pokemon) = oldItem.id == newItem.id

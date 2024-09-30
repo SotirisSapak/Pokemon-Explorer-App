@@ -13,6 +13,7 @@ import com.sotirisapak.libs.pokemonexplorer.backend.models.PokemonType
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.PokemonService
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.TypeService
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.mutableLiveData
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
@@ -223,6 +224,7 @@ class HomeViewModel(
         adapters.pokemonAdapter.submitList(paginatedListOfPokemon)
         // clear progress
         properties.progress.clear()
+
     }
 
 

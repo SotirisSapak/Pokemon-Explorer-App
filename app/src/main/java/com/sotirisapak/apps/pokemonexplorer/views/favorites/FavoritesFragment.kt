@@ -3,10 +3,18 @@ package com.sotirisapak.apps.pokemonexplorer.views.favorites
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentFavoritesBinding
+import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
+import com.sotirisapak.libs.pokemonexplorer.core.app.observe
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
+import com.sotirisapak.libs.pokemonexplorer.framework.bottomRoundedInsets
+import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
 
 /**
  * Framework to provide an interface to user to manipulate their favorite pokemon offline. This object
@@ -15,6 +23,12 @@ import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
  * @since 1.0.0
  */
 class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
+
+    /** Host viewModel instance */
+    private val hostViewModel: HostViewModel by activityViewModels()
+
+    /** ViewModel instance */
+    private val viewModel: FavoritesViewModel by viewModels { FavoritesViewModel.factory(hostViewModel) }
 
     /**
      * You have to inflate your dataBinding class as below:
@@ -56,6 +70,7 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
      */
     override fun attach() {
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
     }
 
     /**
@@ -79,7 +94,12 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) {
-
+        // ? ------------------ Utilities ------------------
+        attachLayoutInsets()
+        // ? ------------------ Utilities ------------------
+        observeStates()
+        // ? ------------------ Listeners ------------------
+        binding.buttonBack.setOnClickListener(onBackClick)
     }
 
     /**
@@ -91,5 +111,43 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
         // at this point...back button should return to home fragment
         findNavController().popBackStack()
     }
+
+
+    // ? ==========================================================================================
+    // ? Utilities
+    // ? ==========================================================================================
+    private fun observeStates() = observe(viewModel.listState) {
+        when(it) {
+            FavoritesViewModel.States.Idle -> {}
+            FavoritesViewModel.States.Fetching -> {}
+            FavoritesViewModel.States.NoItems -> {
+
+            }
+            FavoritesViewModel.States.Success -> {
+
+            }
+            else -> {}
+        }
+        // reset state to idle
+        viewModel.listState.clear(FavoritesViewModel.States.Idle)
+    }
+
+
+    // ? ==========================================================================================
+    // ? Utilities
+    // ? ==========================================================================================
+    private fun attachLayoutInsets() {
+        binding.layoutHeader.topRoundedInsets()
+        binding.recyclerViewPokemon.bottomRoundedInsets()
+    }
+
+
+    // ? ==========================================================================================
+    // ? Listeners
+    // ? ==========================================================================================
+    private val onBackClick = View.OnClickListener {
+        viewModel.onBackPressed { baseActivity.onBackPressedDispatcher.onBackPressed() }
+    }
+
 
 }

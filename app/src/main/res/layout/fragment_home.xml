@@ -97,7 +97,8 @@
                 android:paddingEnd="15dp"
                 tools:listitem="@layout/rv_item_type"
                 tools:itemCount="10"
-                android:adapter="@{viewModel.adapters.typeAdapter}"/>
+                android:adapter="@{viewModel.adapters.typeAdapter}"
+                android:layoutAnimation="@anim/rv_layout_animation"/>
 
             <!-- A scrollView for nested recycler view placement -->
             <androidx.core.widget.NestedScrollView
@@ -115,6 +116,7 @@
                     android:orientation="vertical">
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewPokemon"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:nestedScrollingEnabled="false"
