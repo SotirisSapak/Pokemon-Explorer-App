@@ -1,6 +1,7 @@
 package com.sotirisapak.apps.pokemonexplorer.views.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -159,7 +160,6 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     private val onFavoriteClick = View.OnClickListener {
         // in order to avoid unwanted results and save some network traffic...remove any pending
         // job from stack
-        viewModel.finishAllJobs()
         findNavController().navigate(R.id.action_homeToFavorites)
     }
 

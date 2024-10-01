@@ -10,6 +10,7 @@ import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
@@ -99,6 +100,7 @@ open class ViewModelBase: ViewModel() {
     fun finishJobByTag(tag: String = TAG_JOB_NO_NAME) {
         properties.jobs.forEach { (key, job) ->
             if(tag == key) {
+                Log.d("finishJobByTag", "Job found with tag \"$tag\" -> Set to COMPLETE ")
                 // check if this job is active
                 if(job.isActive) {
                     job.cancel()
@@ -107,7 +109,27 @@ open class ViewModelBase: ViewModel() {
             }
         }
         // remove job from list
-        properties.jobs.remove(tag)
+        val jobTagRemoved = properties.jobs.remove(tag)
+        Log.d("finishJobByTag", "Job removed! (${jobTagRemoved})")
+    }
+
+    /**
+     * Finish all jobs except the one with the given [tag].
+     * @param tag the job tag name to exclude from termination
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun finishAllJobsExceptTag(tag: String = TAG_JOB_NO_NAME) {
+        properties.jobs.forEach { (key, job) ->
+            if(tag != key) {
+                // check if this job is active
+                if(job.isActive) {
+                    job.cancel()
+                    // remove job from list
+                    properties.jobs.remove(tag)
+                }
+            }
+        }
     }
 
     /**
@@ -116,7 +138,11 @@ open class ViewModelBase: ViewModel() {
      * @since 1.0.0
      */
     @UiThread
-    fun finishAllJobs() = properties.jobs.forEach { (key, _) -> finishJobByTag(key) }
+    fun finishAllJobs() {
+        if(properties.jobs.isNotEmpty()) {
+            properties.jobs.forEach { (key, _) -> finishJobByTag(key) }
+        }
+    }
 
     /**
      * Create a new job instance to execute on viewModel scope. Generated job will automatically be
@@ -135,14 +161,15 @@ open class ViewModelBase: ViewModel() {
     fun newJob(
         tag: String = TAG_JOB_NO_NAME,
         notifyException: Boolean = true,
-        action: suspend () -> Unit
+        action: suspend (tag: String) -> Unit
     ) {
         Log.d(tag, "Terminate possible pending job and then create a new one")
         finishJobByTag(tag)
+        Log.d(tag, "Start...")
         properties.jobs[tag] = viewModelScope.launch {
             try {
-                Log.d(tag, "Start...")
-                action.invoke()
+                Log.d(tag, "Execute action...")
+                action.invoke(tag)
             } catch (ex: Exception) {
                 if(notifyException) properties.error.set(ex.message ?: "Unknown error")
             }

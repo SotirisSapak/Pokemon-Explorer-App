@@ -40,7 +40,9 @@ class FavoritesViewModel(
         properties.proceed.set()
     }
 
-    init { initializeFavoritesList() }
+    init {
+        // initializeFavoritesList()
+    }
 
     private fun initializeFavoritesList() = newJob(TAG_FAVORITES_INITIALIZATION) {
         properties.progress.set()
@@ -53,10 +55,10 @@ class FavoritesViewModel(
         // Change the state based on the result
         if(response.isEmpty()) {
             listState.set(States.NoItems)
-            return@newJob
+        } else {
+            // list has actually some pokemon
+            favoritesAdapter.submitList(response) { listState.set(States.Success) }
         }
-        // list has actually some pokemon
-        favoritesAdapter.submitList(response) { listState.set(States.Success) }
     }
 
     companion object {
