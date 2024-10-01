@@ -160,6 +160,7 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     private val onFavoriteClick = View.OnClickListener {
         // in order to avoid unwanted results and save some network traffic...remove any pending
         // job from stack
+        viewModel.finishAllJobs()
         findNavController().navigate(R.id.action_homeToFavorites)
     }
 

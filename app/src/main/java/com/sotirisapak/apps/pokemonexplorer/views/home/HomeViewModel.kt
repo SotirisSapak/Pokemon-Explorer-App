@@ -19,7 +19,7 @@ import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
 import androidx.lifecycle.viewModelScope
-
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 
 /**
  * ViewModel implementation for [HomeFragment]
@@ -51,6 +51,7 @@ class HomeViewModel(
         }
         val pokemonAdapter = PokemonAdapter { _, clickedPokemon ->
             hostViewModel.selectedPokemon = clickedPokemon
+            finishAllJobs()
             // trigger a signal to view to go to preview fragment
             properties.proceed.set()
         }
@@ -278,26 +279,23 @@ class HomeViewModel(
         // first we have to configure pagination list
         val paginatedList = configurePagination(tag, pokemonTypes)
         // using a for loop...fetch all pokemon information based on their url
-        for(pokemonInformation in paginatedList) {
-            // fetch result to a response object
-            var response: ApiResult<Pokemon, String> = ApiResult.onFailure("")
-            // do this action in background to avoid ui freeze!
-            onBackground {
+        onBackground {
+            for(pokemonInformation in paginatedList) {
+                // fetch result to a response object
+                var response: ApiResult<Pokemon, String> = ApiResult.onFailure("")
                 response = pokemonService.getPokemonByUrl(pokemonInformation.pokemonInformation.url)
-            }
-            // check the response data
-            when(response) {
-                is ApiResult.Failure -> {
-                    val smartCastedResponse = response as ApiResult.Failure<Pokemon, String>
-                    // Ignore this pokemon
-                    Log.i(tag,
-                        "Pokemon with name \"${pokemonInformation.pokemonInformation.name}\" " +
-                                "is ignored due to error ${smartCastedResponse.error}")
-                }
-                is ApiResult.Success -> {
-                    val smartCastedResponse = response as ApiResult.Success<Pokemon, String>
-                    // add this pokemon to viewModel list
-                    pokemonList.add(smartCastedResponse.data)
+                // check the response data
+                when(response) {
+                    is ApiResult.Failure -> onUiThread {
+                        // Ignore this pokemon
+                        Log.i(tag,
+                            "Pokemon with name \"${pokemonInformation.pokemonInformation.name}\" " +
+                                    "is ignored due to error ${response.error}")
+                    }
+                    is ApiResult.Success -> {
+                        // add this pokemon to viewModel list
+                        pokemonList.add(response.data)
+                    }
                 }
             }
         }

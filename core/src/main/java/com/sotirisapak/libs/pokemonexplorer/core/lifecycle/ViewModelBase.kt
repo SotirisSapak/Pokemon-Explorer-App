@@ -10,7 +10,6 @@ import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
@@ -124,7 +123,11 @@ open class ViewModelBase: ViewModel() {
             if(tag != key) {
                 // check if this job is active
                 if(job.isActive) {
-                    job.cancel()
+                    try {
+                        job.cancel()
+                    } catch (ex: Exception) {
+                        Log.e(tag, ex.message ?: "Unknown error")
+                    }
                     // remove job from list
                     properties.jobs.remove(tag)
                 }
@@ -165,12 +168,13 @@ open class ViewModelBase: ViewModel() {
     ) {
         Log.d(tag, "Terminate possible pending job and then create a new one")
         finishJobByTag(tag)
-        Log.d(tag, "Start...")
+        Log.d(tag, "Start $tag...")
         properties.jobs[tag] = viewModelScope.launch {
             try {
                 Log.d(tag, "Execute action...")
                 action.invoke(tag)
             } catch (ex: Exception) {
+                Log.e(tag, ex.message ?: "Unknown error")
                 if(notifyException) properties.error.set(ex.message ?: "Unknown error")
             }
         }
