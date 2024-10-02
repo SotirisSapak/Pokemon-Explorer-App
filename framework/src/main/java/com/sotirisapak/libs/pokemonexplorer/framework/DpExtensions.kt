@@ -8,7 +8,7 @@ import android.util.DisplayMetrics
  * @author SotirisSapak
  * @since 1.0.0
  */
-val Int.dp: Int
+val Int.px: Int
     get() = this / (Resources.getSystem().displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
 
 /**
@@ -16,7 +16,7 @@ val Int.dp: Int
  * @author SotirisSapak
  * @since 1.0.0
  */
-val Int.px: Int
+val Int.dp: Int
     get() = this * (Resources.getSystem().displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
 
 /**

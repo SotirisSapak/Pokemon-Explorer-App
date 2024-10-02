@@ -10,7 +10,7 @@ import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
  * @author SotirisSapak
  * @since 1.0.0
  */
-@Database(entities = [Pokemon::class], version = 1)
+@Database(entities = [Pokemon::class], version = 1, exportSchema = false)
 abstract class FavoriteDatabase: RoomDatabase() {
 
     /**

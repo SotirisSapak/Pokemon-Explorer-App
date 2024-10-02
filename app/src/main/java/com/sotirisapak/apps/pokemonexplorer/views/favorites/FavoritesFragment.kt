@@ -124,7 +124,6 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
     // ? ==========================================================================================
     private fun attachLayoutInsets() {
         binding.layoutHeader.topRoundedInsets()
-        binding.recyclerViewPokemon.bottomRoundedInsets()
     }
 
 

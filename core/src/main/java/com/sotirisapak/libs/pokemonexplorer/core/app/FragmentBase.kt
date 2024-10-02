@@ -46,7 +46,7 @@ const val FRAGMENT_ANIMATION_DURATION_SNAP = 150L
  * @since 1.0.0
  */
 abstract class FragmentBase<VB: ViewBinding>(
-    private val transitionAxis: Int = MaterialSharedAxis.Z,
+    private val transitionAxis: Int = MaterialSharedAxis.X,
     private val transitionDuration: Long = FRAGMENT_ANIMATION_DURATION_FAST
 ): Fragment() {
 
@@ -124,11 +124,11 @@ abstract class FragmentBase<VB: ViewBinding>(
             interpolator = LinearOutSlowInInterpolator()
             duration = transitionDuration
         }
-        returnTransition = MaterialSharedAxis(transitionAxis, false).apply {
+        returnTransition = MaterialSharedAxis(transitionAxis, true).apply {
             interpolator = LinearOutSlowInInterpolator()
             duration = transitionDuration
         }
-        reenterTransition = MaterialSharedAxis(transitionAxis, true).apply {
+        reenterTransition = MaterialSharedAxis(transitionAxis, false).apply {
             interpolator = LinearOutSlowInInterpolator()
             duration = transitionDuration
         }

@@ -28,7 +28,7 @@ class PokemonApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         // enable Material3 dynamic theming if available
-        DynamicColors.applyToActivitiesIfAvailable(this)
+        // DynamicColors.applyToActivitiesIfAvailable(this)
         // init retrofit instance
         retrofit = PokemonApi.instance
         // initialize all services

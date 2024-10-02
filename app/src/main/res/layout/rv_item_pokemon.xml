@@ -28,7 +28,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="20dp"
             android:layout_marginVertical="10dp">
 
             <!-- The imageView to preview the pokemon icon -->
@@ -76,7 +76,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="20dp"
             android:src="@drawable/icon_chevron_right"
-            android:importantForAccessibility="no"/>
+            android:importantForAccessibility="no"
+            app:tint="?colorOnSurfaceVariant"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

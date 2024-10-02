@@ -7,6 +7,9 @@ import androidx.core.content.res.ResourcesCompat
 import com.sotirisapak.apps.pokemonexplorer.databinding.RvItemTypeBinding
 import com.sotirisapak.apps.pokemonexplorer.models.Type
 import com.sotirisapak.libs.pokemonexplorer.core.components.BaseAdapter
+import com.sotirisapak.libs.pokemonexplorer.framework.ThemeSchema
+import com.sotirisapak.libs.pokemonexplorer.framework.dp
+import com.sotirisapak.libs.pokemonexplorer.framework.px
 
 /**
  * The adapter for the recycler view that holds the pokemon types
@@ -58,17 +61,11 @@ class TypeAdapter(
         // when a type is selected, the application should invert the colors of the card and text
         // accordingly.
         if(item.isSelected) {
-            binding.imageSelectionGradient.alpha = 0.6f
-            binding.textType.typeface = ResourcesCompat.getFont(
-                binding.root.context,
-                com.sotirisapak.libs.pokemonexplorer.framework.R.font.font_bold
-            )
+            binding.cardType.strokeWidth = 2.dp
+            binding.cardType.cardElevation = 12.dp.toFloat()
         } else {
-            binding.imageSelectionGradient.alpha = 0f
-            binding.textType.typeface = ResourcesCompat.getFont(
-                binding.root.context,
-                com.sotirisapak.libs.pokemonexplorer.framework.R.font.font_regular
-            )
+            binding.cardType.strokeWidth = 0
+            binding.cardType.cardElevation = 0f
         }
     }
 

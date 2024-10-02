@@ -1,5 +1,6 @@
 package com.sotirisapak.apps.pokemonexplorer.adapters
 
+import android.graphics.Paint.Align
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.sotirisapak.apps.pokemonexplorer.databinding.RvItemPokemonBinding
@@ -40,12 +41,12 @@ class PokemonAdapter(
     ) {
         binding.pokemon = item
         binding.index = index
-        // async load the pokemon icon to imageView
+        // async load the pokemon icon to imageView (from cache automatically due to Picasso library)
         Picasso
             .get()
             .load(item.sprites.frontDefault)
             .resize(50, 50)
-            .onlyScaleDown()
+            .centerCrop()
             .into(binding.imagePokemonIcon)
         // attach click listener
         binding.container.setOnClickListener{ onPokemonClick.invoke(binding, item) }
@@ -68,6 +69,5 @@ class PokemonAdapter(
      */
     override fun createViewHolder(parent: ViewGroup) =
         RvItemPokemonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
 
 }

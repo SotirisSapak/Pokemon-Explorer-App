@@ -41,16 +41,18 @@
 
             <!-- Assign the header text -->
             <com.google.android.material.textview.MaterialTextView
-                style="@style/TextView.Header"
                 android:id="@+id/textHeader"
-                android:layout_width="wrap_content"
+                style="@style/TextView.Header"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/menu_title_favorites"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginVertical="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginVertical="20dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/buttonBack"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Button to open the favourites tab -->
             <com.google.android.material.button.MaterialButton
@@ -63,8 +65,15 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:iconSize="26dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginBottom="5dp"/>
+
+            <!-- Divider to separate header from content -->
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:dividerColor="?colorSurfaceContainerHigh"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- End -->
@@ -74,46 +83,28 @@
             android:id="@+id/layoutEmptyState"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            android:visibility="@{viewModel.itemsCount == 0 &amp;&amp; !viewModel.properties.progress? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="@{viewModel.itemsCount == 0 &amp;&amp; !viewModel.properties.progress? View.VISIBLE : View.GONE}">
+            app:layout_constraintTop_toTopOf="parent">
 
             <!-- Layout to center empty state components -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutEmptyStateContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <!-- ImageView to show the empty state icon! -->
-                <ImageView
-                    android:id="@+id/imageEmptyState"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="10dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/image_favorites_empty_state"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottieEmptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="?colorPrimary" />
-
-                <!-- Text to show to empty state prompt -->
-                <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextView.Header.Item"
-                    android:id="@+id/textEmptyStatePrompt"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="There is not any favorite pokemon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageEmptyState"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:gravity="center"/>
+                    app:lottie_autoPlay="true"
+                    app:lottie_rawRes="@raw/animation_favorites_empty_state" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -124,7 +115,9 @@
             android:id="@+id/recyclerViewPokemon"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingTop="10dp"
+            android:paddingBottom="20dp"
             android:adapter="@{viewModel.favoritesAdapter}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@+id/layoutHeader"

@@ -15,7 +15,6 @@
         android:layout_height="match_parent"
         tools:context=".views.home.HomeFragment"
         android:background="?android:attr/colorBackground">
-
         <!--
             Will use 4 different layouts...
             1. The header layout to preview some headers like (home title)
@@ -49,16 +48,17 @@
 
             <!-- Assign the header text -->
             <com.google.android.material.textview.MaterialTextView
-                style="@style/TextView.Header"
                 android:id="@+id/textHeader"
-                android:layout_width="wrap_content"
+                style="@style/TextView.Header"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                android:layout_marginStart="20dp"
                 android:text="@string/menu_title_home"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginVertical="20dp"/>
+                app:layout_constraintEnd_toStartOf="@+id/buttonFavorites"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Button to open the favourites tab -->
             <com.google.android.material.button.MaterialButton
@@ -71,8 +71,15 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:iconSize="26dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="5dp"/>
+
+            <!-- Divider to separate header from content -->
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:dividerColor="?colorSurfaceContainerHigh"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- End Header layout -->
@@ -85,28 +92,12 @@
             app:layout_constraintTop_toBottomOf="@+id/layoutHeader"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <!-- A recycler view to preview the categories (types) -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewItems"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toTopOf="parent"
-                android:clipToPadding="false"
-                android:paddingStart="20dp"
-                android:paddingEnd="15dp"
-                tools:listitem="@layout/rv_item_type"
-                tools:itemCount="10"
-                android:adapter="@{viewModel.adapters.typeAdapter}"
-                android:layoutAnimation="@anim/rv_layout_animation"/>
-
             <!-- A scrollView for nested recycler view placement -->
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nestedScrollViewContent"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintTop_toBottomOf="@id/recyclerViewItems"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <!-- Linear layout for vertical placement -->
@@ -116,12 +107,45 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.Material3.CardView.Filled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="0dp"
+                        app:cardBackgroundColor="?colorSurfaceContainerHigh">
+
+                        <!-- A recycler view to preview the categories (types) -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewItems"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:clipToPadding="false"
+                            android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
+                            android:paddingVertical="7dp"
+                            tools:listitem="@layout/rv_item_type"
+                            tools:itemCount="10"
+                            android:adapter="@{viewModel.adapters.typeAdapter}" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Divider to separate header from content -->
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:dividerColor="?colorSurfaceContainerHigh"/>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewPokemon"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:nestedScrollingEnabled="false"
                         android:layout_weight="1"
+                        android:clipToPadding="false"
+                        android:paddingTop="10dp"
                         tools:listitem="@layout/rv_item_pokemon"
                         android:adapter="@{viewModel.adapters.pokemonAdapter}"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
@@ -132,8 +156,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:indeterminate="true"
-                        app:trackThickness="2dp"
-                        app:trackCornerRadius="2dp"
+                        app:trackThickness="4dp"
+                        app:trackCornerRadius="4dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
                         android:layout_gravity="center"
                         android:visibility="@{viewModel.properties.progress ? View.VISIBLE : View.INVISIBLE}"/>
 
