@@ -15,7 +15,8 @@ import com.squareup.picasso.Picasso
  * @since 1.0.0
  */
 class PokemonAdapter(
-    private val onPokemonClick: (bind: RvItemPokemonBinding, pokemon: Pokemon) -> Unit
+    private val onPokemonClick: (bind: RvItemPokemonBinding, pokemon: Pokemon) -> Unit,
+    private val onPokemonLongClick: (bind: RvItemPokemonBinding, pokemon: Pokemon) -> Boolean = { _, _ -> false }
 ): BaseAdapter<RvItemPokemonBinding, Pokemon>(Pokemon.DiffCallback) {
 
     /**
@@ -48,6 +49,7 @@ class PokemonAdapter(
             .into(binding.imagePokemonIcon)
         // attach click listener
         binding.container.setOnClickListener{ onPokemonClick.invoke(binding, item) }
+        binding.container.setOnLongClickListener { onPokemonLongClick.invoke(binding, item) }
     }
 
     /**

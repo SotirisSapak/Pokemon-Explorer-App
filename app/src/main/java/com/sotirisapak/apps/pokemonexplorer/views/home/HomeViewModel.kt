@@ -51,12 +51,14 @@ class HomeViewModel(
                 loadTypeData()
             }
         }
-        val pokemonAdapter = PokemonAdapter { _, clickedPokemon ->
-            hostViewModel.selectedPokemon = clickedPokemon
-            finishJob()
-            // trigger a signal to view to go to preview fragment
-            properties.proceed.set()
-        }
+        val pokemonAdapter = PokemonAdapter(
+            onPokemonClick = { _, clickedPokemon ->
+                hostViewModel.selectedPokemon = clickedPokemon
+                finishJob()
+                // trigger a signal to view to go to preview fragment
+                properties.proceed.set()
+            }
+        )
     }
 
     /**
@@ -67,9 +69,9 @@ class HomeViewModel(
     inner class Pagination {
 
         /**
-         * Offset is the amount of items to fetch next. Default is 10
+         * Offset is the amount of items to fetch next. Default is 15
          */
-        var offset = 10
+        var offset = 15
 
         /**
          * Index is the indicator to tell the process at which count is.

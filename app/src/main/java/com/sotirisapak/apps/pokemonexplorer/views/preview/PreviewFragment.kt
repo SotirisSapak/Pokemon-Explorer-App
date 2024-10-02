@@ -2,6 +2,7 @@ package com.sotirisapak.apps.pokemonexplorer.views.preview
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -9,8 +10,16 @@ import androidx.navigation.fragment.findNavController
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentPreviewBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
+import com.sotirisapak.libs.pokemonexplorer.core.app.observe
 import com.sotirisapak.libs.pokemonexplorer.core.app.setNavigationResult
+import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
+import com.squareup.picasso.Picasso
 
+/**
+ * Fragment implementation to preview a selected pokemon attributes along with the list item information
+ * @author SotirisSapak
+ * @since 1.0.0
+ */
 class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
 
     /** ViewModel instance from host activity to bind shared properties */
@@ -83,7 +92,13 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) {
-
+        // ? ------------ Utilities ------------
+        attachLayoutInsets()
+        provideImageToHeaderViaUrl()
+        // ? ------------ Observers ------------
+        observerForIsFavorite()
+        // ? ------------ Listeners ------------
+        binding.cardFavorite.setOnClickListener(onFavoriteClick)
     }
 
     /**
@@ -93,9 +108,43 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
      */
     override fun onBack() {
         viewModel.onBackPressed {
+            // we should send a signal back to calling fragment
+            // This signal will only be read by FavoriteFragment cause there is a case that the user
+            // will preview the favorite list and uncheck this pokemon. So, favorite fragment need
+            // to refresh its list.
             setNavigationResult("requireUpdate", viewModel.returnRefreshListSignal)
             findNavController().popBackStack()
         }
     }
+
+
+    // ? ==========================================================================================
+    // ? Utilities
+    // ? ==========================================================================================
+    private fun attachLayoutInsets(){
+        binding.layoutHeader.topRoundedInsets()
+    }
+    private fun provideImageToHeaderViaUrl() {
+        Picasso
+            .get()
+            .load(viewModel.selectedPokemon.sprites.frontDefault)
+            .resize(50, 50)
+            .onlyScaleDown()
+            .into(binding.imagePokemonIcon)
+    }
+
+
+    // ? ==========================================================================================
+    // ? Observers
+    // ? ==========================================================================================
+    private fun observerForIsFavorite() = observe(viewModel.isFavorite) {
+        binding.iconFavorite.isSelected = it
+    }
+
+
+    // ? ==========================================================================================
+    // ? Listeners
+    // ? ==========================================================================================
+    private val onFavoriteClick = View.OnClickListener { viewModel.onFavoriteSelection() }
 
 }

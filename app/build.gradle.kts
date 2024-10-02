@@ -80,6 +80,8 @@ dependencies {
     implementation(libs.room.ktx)
     // For fetching async images via web
     implementation(libs.picasso)
+    // For animations
+    implementation(libs.lottie)
 
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.room.compiler)    // not using KSP due to lack of dataBinding support

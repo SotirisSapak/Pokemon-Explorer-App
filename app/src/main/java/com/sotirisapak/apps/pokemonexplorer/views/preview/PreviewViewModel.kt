@@ -9,6 +9,7 @@ import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.mutableLiveData
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
@@ -23,41 +24,90 @@ class PreviewViewModel(
     private val favoritesService: FavoritesService
 ): ViewModelBase() {
 
-    /** The pokemon that is selected from previous page */
+    /**
+     * The selected pokemon from previous page
+     */
     val selectedPokemon = host.selectedPokemon
 
+    /**
+     * Indicator (LiveData) to configure the favorite state of the selected pokemon to save it to
+     * local database for offline access
+     */
+    var isFavorite = false.mutableLiveData
+
+    /**
+     * Signal for the FavoriteList to refresh its list if user uncheck the favorite option of this
+     * pokemon and this fragment is opened from the favorite list item selection.
+     */
     var returnRefreshListSignal = false
 
     init {
-        onFavoriteSelection()
+        fetchFavoriteState()
     }
 
+    /**
+     * For this specific viewModel, we must override [onBackPressed] [ViewModelBase] method to
+     * remove the selected pokemon from the host viewModel [HostViewModel].
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
     override fun onBackPressed(action: () -> Unit) {
         super.onBackPressed(action)
         // remove the selected pokemon from host viewModel
         host.selectedPokemon = Pokemon()
     }
 
-    fun onFavoriteSelection() = newJob(
-        tag = TAG_CONFIGURE_FAVORITE,
-        notifyException = false
-    ) {
+    /**
+     * Background task to make a pokemon favorite or not in offline database. This method will be called
+     * from favorite button click via click listener.
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun onFavoriteSelection() = newJob(TAG_CONFIGURE_FAVORITE) {
+        // reset viewModel properties
+        properties.progress.set()
+        properties.error.clear()
+        // logic is simple! If this pokemon belongs to user's favorites, then remove from database, else
+        // add it!
+        onBackground {
+            if(favoritesService.isFavorite(selectedPokemon)) {
+                favoritesService.deleteFromFavorites(selectedPokemon)
+                // cause is a LiveData we have to make this configuration to main thread
+                onUiThread { isFavorite.set(false) }
+            } else {
+                favoritesService.insertToFavorites(selectedPokemon)
+                // cause is a LiveData we have to make this configuration to main thread
+                onUiThread { isFavorite.set(true) }
+            }
+        }
+        properties.progress.clear()
+        // configure the signal for favorite list cause user remove or add a pokemon to offline favorite database
+        returnRefreshListSignal = true
+    }
+
+    /**
+     * Background task to fetch the pokemon favorite state (if is user's favorite or not)
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+
+    fun fetchFavoriteState() = newJob(TAG_FETCH_FAVORITE_STATE) {
         properties.progress.set()
         properties.error.clear()
         onBackground {
             if(favoritesService.isFavorite(selectedPokemon)) {
-                favoritesService.deleteFromFavorites(selectedPokemon)
+                onUiThread { isFavorite.set(true) }
             } else {
-                favoritesService.insertToFavorites(selectedPokemon)
+                onUiThread { isFavorite.set(false) }
             }
         }
         properties.progress.clear()
-        returnRefreshListSignal = true
     }
 
     companion object {
 
         const val TAG_CONFIGURE_FAVORITE = "configureFavOption"
+        const val TAG_FETCH_FAVORITE_STATE = "fetchFavoriteState"
 
         fun factory(host: HostViewModel) = viewModelFactory {
             initializer {

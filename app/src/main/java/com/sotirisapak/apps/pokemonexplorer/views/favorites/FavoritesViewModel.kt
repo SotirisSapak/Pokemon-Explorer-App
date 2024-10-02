@@ -24,20 +24,25 @@ class FavoritesViewModel(
     private val favoritesService: FavoritesService
 ): ViewModelBase() {
 
-
-
-    val favoritesAdapter = PokemonAdapter { _, clickedPokemon ->
-        hostViewModel.selectedPokemon = clickedPokemon
-        // trigger to navigate to preview page
-        properties.proceed.set()
-    }
+    val favoritesAdapter = PokemonAdapter(
+        onPokemonClick = { _, pokemon ->
+            hostViewModel.selectedPokemon = pokemon
+            // trigger to navigate to preview page
+            properties.proceed.set()
+        },
+        onPokemonLongClick =  { _, pokemon ->
+            longClickedPokemon.set(pokemon)
+            return@PokemonAdapter true
+        }
+    )
 
     private val items: MutableList<Pokemon> = mutableListOf()
     val itemsCount = 0.mutableLiveData
+    val longClickedPokemon = Pokemon().mutableLiveData()
 
     init { getFavorites() }
 
-    private fun getFavorites() = newJob(TAG_FAVORITES_INITIALIZATION) {
+    private fun getFavorites() = newJob(TAG_FETCH_FAVORITES) {
         items.clear()
         itemsCount.set(0)
         properties.progress.set()
@@ -50,12 +55,19 @@ class FavoritesViewModel(
         itemsCount.set(items.size)
         favoritesAdapter.submitList(response)
     }
+    fun configureFavoriteSelectionOf(pokemon: Pokemon) = newJob(TAG_CONFIGURE_FAVORITE_POKEMON) {
+        properties.progress.set()
+        properties.error.clear()
+        onBackground { favoritesService.deleteFromFavorites(pokemon) }
+        refresh()
+    }
 
     fun refresh() = getFavorites()
 
     companion object {
 
-        const val TAG_FAVORITES_INITIALIZATION = "tag_initFavList"
+        const val TAG_FETCH_FAVORITES = "getFavorites"
+        const val TAG_CONFIGURE_FAVORITE_POKEMON = "configureFavorite"
 
         fun factory(hostViewModel: HostViewModel) = viewModelFactory {
             initializer {

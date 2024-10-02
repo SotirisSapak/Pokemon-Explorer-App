@@ -70,6 +70,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:iconSize="26dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="5dp"/>
 
@@ -147,16 +148,18 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutErrorState"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?colorErrorContainer"
-            android:visibility="@{viewModel.properties.error.length() > 0? View.VISIBLE : View.GONE}">
+            android:layout_height="0dp"
+            android:background="?android:attr/colorBackground"
+            android:visibility="@{viewModel.properties.error.length() > 0? View.VISIBLE : View.GONE}"
+            app:layout_constraintTop_toBottomOf="@+id/layoutHeader"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <!-- Layout to center the items vertically -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/iconError"
@@ -201,17 +204,17 @@
                     android:id="@+id/buttonErrorRefresh"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/font_medium"
+                    android:text="Refresh"
+                    android:textColor="?colorOnError"
+                    app:backgroundTint="?colorError"
+                    app:icon="@drawable/icon_refresh"
+                    app:iconTint="?colorOnError"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/materialTextView2"
-                    android:layout_marginTop="20dp"
-                    app:backgroundTint="?colorError"
-                    android:textColor="?colorOnError"
-                    app:iconTint="?colorOnError"
-                    android:text="Refresh"
-                    android:fontFamily="@font/font_medium"
-                    app:icon="@drawable/icon_refresh"/>
+                    app:layout_constraintTop_toBottomOf="@+id/materialTextView2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

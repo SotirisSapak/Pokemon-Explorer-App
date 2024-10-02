@@ -11,10 +11,12 @@ import androidx.navigation.fragment.findNavController
 import com.sotirisapak.apps.pokemonexplorer.R
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentFavoritesBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
+import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 import com.sotirisapak.libs.pokemonexplorer.core.app.observe
 import com.sotirisapak.libs.pokemonexplorer.core.app.observeNavigationResult
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.framework.bottomRoundedInsets
 import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
 
@@ -101,6 +103,7 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
         // ? ------------------ Utilities ------------------
         observeProceed()
         observeNavigationResultFromPreview()
+        observeLongClickedPokemon()
         // ? ------------------ Listeners ------------------
         binding.buttonBack.setOnClickListener(onBackClick)
     }
@@ -138,7 +141,12 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
             viewModel.properties.proceed.clear()
         }
     }
-
+    private fun observeLongClickedPokemon() = observe(viewModel.longClickedPokemon) { pokemon ->
+        if(pokemon.id != -1) {
+            viewModel.configureFavoriteSelectionOf(pokemon)
+            viewModel.longClickedPokemon.set(Pokemon())
+        }
+    }
 
     // ? ==========================================================================================
     // ? Listeners
