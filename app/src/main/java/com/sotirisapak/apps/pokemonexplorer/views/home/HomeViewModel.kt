@@ -19,6 +19,7 @@ import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
 import androidx.lifecycle.viewModelScope
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.nonNullValue
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 
 /**
@@ -46,12 +47,13 @@ class HomeViewModel(
             // we should make program remember if the selected type is the one which is clicked
             if(selectedPokemonType != selectedType) {
                 selectedPokemonType = selectedType
-                loadSelectedTypeData()
+                finishJob()
+                loadTypeData()
             }
         }
         val pokemonAdapter = PokemonAdapter { _, clickedPokemon ->
             hostViewModel.selectedPokemon = clickedPokemon
-            finishAllJobs()
+            finishJob()
             // trigger a signal to view to go to preview fragment
             properties.proceed.set()
         }
@@ -168,7 +170,7 @@ class HomeViewModel(
         // Now, we have to fetch the data for the selected type which is the "Steel".
         selectedPokemonType = arrayOfTypes[0]
         // fetch all data for "Steel"
-        loadSelectedTypeData()
+        loadTypeData()
     }
 
     // ? ==========================================================================================
@@ -187,76 +189,41 @@ class HomeViewModel(
      * @author SotirisSapak
      * @since 1.0.0
      */
-    private fun loadSelectedTypeData() = newJob(
+
+    private fun loadTypeData() = newApiJob(
         tag = TAG_FETCH_SELECTED_TYPE_DATA,
-        notifyException = false
-    ) { tag ->
-
-        /*
-            This process will perform the task for fetching the selected type information. When any
-            type is selected, then we have to remove any pokemon left in pokemonList and reset the
-            pokemon adapter accordingly
-        */
-
-        // we must break terminate all jobs in order to avoid unwanted list replacements
-        finishAllJobsExceptTag(tag)
-        // reset pagination index
-        paginationProperties.index = 0
-        // set process to true and error to false to avoid ui overlay
-        properties.progress.set()
-        properties.error.clear()
-        // reset pokemon list and adapter cause we have selected a new type
-        pokemonList.clear()
-        adapters.pokemonAdapter.submitList(pokemonList)
-        // we need to fetch the type information from api. The result will be saved in a response
-        // variable
-        var response: ApiResult<PokemonType, String> = ApiResult.onFailure("")
-        // do this action in background to avoid ui freeze!
-        onBackground {
-            response = typeService.getTypeById(selectedPokemonType.id)
-        }
-        // we must check the response data
-        when(response) {
-            is ApiResult.Failure -> {
-                val smartCastedResponse = response as ApiResult.Failure<PokemonType, String>
-                // when response return a Failure signal, then we have to preview the error and
-                // stop the task. No need to do this cause newJob method will do this for us automatically
+        action = {
+            /*
+                This process will perform the task for fetching the selected type information. When any
+                type is selected, then we have to remove any pokemon left in pokemonList and reset the
+                pokemon adapter accordingly
+            */
+            onUiThread {
+                // reset pagination index
+                paginationProperties.index = 0
+                // set process to true and error to false to avoid ui overlay
+                properties.progress.set()
+                properties.error.clear()
+                // reset pokemon list and adapter cause we have selected a new type
+                pokemonList.clear()
+                adapters.pokemonAdapter.submitList(pokemonList)
+            }
+            typeService.getTypeById(selectedPokemonType.id)
+        },
+        after = { successResponse ->
+            // add fetched types to viewModel list if is not empty
+            if (successResponse.pokemonList.isEmpty()) {
+                // Ahhh, for some reason, the list of pokemon is empty...unknown reason
                 properties.progress.clear()
-                properties.error.set(smartCastedResponse.error)
-                Log.e(tag, smartCastedResponse.error)
-            }
-            is ApiResult.Success -> {
-                val smartCastedResponse = response as ApiResult.Success<PokemonType, String>
-                // add fetched types to viewModel list if is not empty
-                if(smartCastedResponse.data.pokemonList.isEmpty()) {
-                    // Ahhh, for some reason, the list of pokemon is empty...unknown reason
-                    properties.progress.clear()
-                    properties.error.set("Unknown reason for not fetching pokemon for \"${smartCastedResponse.data.name}\"")
-                    Log.e(tag, "Unknown reason for not fetching pokemon for \"${smartCastedResponse.data.name}\"")
-                } else {
-                    // add pokemon list to types after removing all previous items
-                    pokemonTypes.clear()
-                    pokemonTypes.addAll(smartCastedResponse.data.pokemonList)
-                    Log.d(tag, "---------------------------------------------------------------")
-                    Log.d(tag, "Type: ${selectedPokemonType.name}")
-                    Log.d(tag, "Items fetched: ${pokemonTypes.size}")
-                    Log.d(tag, "---------------------------------------------------------------")
-                    for(i in pokemonTypes.indices) {
-                        Log.d(tag, "\"${pokemonTypes[i].pokemonInformation.name}\" -> ${pokemonTypes[i].pokemonInformation.url}")
-                        if(i == 5) {
-                            Log.d(tag, " ... ")
-                            Log.d(tag, " ... ")
-                            Log.d(tag, " ** And other ${pokemonTypes.size - 5} ** ")
-                            break
-                        }
-                    }
-                    Log.d(tag, "---------------------------------------------------------------")
-                    // now, handle pokemon pagination fetching using fetchPokemon() method
-                    fetchPokemon()
-                }
+                properties.error.set("Unknown reason for not fetching pokemon for \"${successResponse.name}\"")
+            } else {
+                // add pokemon list to types after removing all previous items
+                pokemonTypes.clear()
+                pokemonTypes.addAll(successResponse.pokemonList)
+                fetchPokemon()
             }
         }
-    }
+    ) {}
 
     /**
      * __TAG__ -> [TAG_FETCH_POKEMON]
@@ -272,43 +239,30 @@ class HomeViewModel(
      * @author SotirisSapak
      * @since 1.0.0
      */
-    private suspend fun fetchPokemon(tag: String = TAG_FETCH_POKEMON) {
-        // set process to true and error to false to avoid ui overlay
+    private suspend fun fetchPokemon() {
         properties.progress.set()
-        properties.error.clear()
-        // first we have to configure pagination list
-        val paginatedList = configurePagination(tag, pokemonTypes)
-        // using a for loop...fetch all pokemon information based on their url
         onBackground {
-            for(pokemonInformation in paginatedList) {
-                // fetch result to a response object
-                var response: ApiResult<Pokemon, String> = ApiResult.onFailure("")
-                response = pokemonService.getPokemonByUrl(pokemonInformation.pokemonInformation.url)
-                // check the response data
-                when(response) {
-                    is ApiResult.Failure -> onUiThread {
-                        // Ignore this pokemon
-                        Log.i(tag,
-                            "Pokemon with name \"${pokemonInformation.pokemonInformation.name}\" " +
-                                    "is ignored due to error ${response.error}")
-                    }
-                    is ApiResult.Success -> {
-                        // add this pokemon to viewModel list
-                        pokemonList.add(response.data)
-                    }
+            val paginatedList = configurePagination(TAG_FETCH_POKEMON, pokemonTypes)
+            // now, handle pokemon pagination fetching using fetchPokemon() method
+            paginatedList.forEach { item ->
+                when(val response = pokemonService.getPokemonByUrl(item.pokemonInformation.url)) {
+                    is ApiResult.Failure -> onUiThread {}
+                    is ApiResult.Success -> onUiThread { pokemonList.add(response.data) }
                 }
             }
         }
-        // check if data is empty or not
-        if(pokemonList.isEmpty()) {
-            properties.error.set("Cannot find pokemon on ${selectedPokemonType.name} type")
-            Log.e(tag, "Cannot find pokemon on ${selectedPokemonType.name} type")
-        } else {
-            // set the result to adapter
-            adapters.pokemonAdapter.submitList(pokemonList)
+        onUiThread {
+            // check if data is empty or not
+            if(pokemonList.isEmpty()) {
+                properties.error.set("Cannot find pokemon on ${selectedPokemonType.name} type")
+                Log.e(TAG_FETCH_POKEMON, "Cannot find pokemon on ${selectedPokemonType.name} type")
+            } else {
+                // set the result to adapter
+                adapters.pokemonAdapter.submitList(pokemonList)
+            }
+            // clear progress
+            properties.progress.clear()
         }
-        // clear progress
-        properties.progress.clear()
     }
 
 
@@ -355,20 +309,19 @@ class HomeViewModel(
     }
 
 
-    fun loadMoreData() = newJob(
-        tag = TAG_FETCH_POKEMON,
-        notifyException = false
-    ){
-        fetchPokemon()
+    fun loadMoreData() = newJob(tag = TAG_FETCH_MORE_POKEMON, notifyException = false){
+        // check if is in progress state and if is then do not re-fetch again
+        if(!properties.progress.nonNullValue) fetchPokemon()
     }
 
-    fun refresh() = loadSelectedTypeData()
+    fun refresh() = loadTypeData()
 
 
     companion object {
 
         const val TAG_FETCH_SELECTED_TYPE_DATA = "fetchSelectedTypeData"
         const val TAG_FETCH_POKEMON = "fetchPokemon"
+        const val TAG_FETCH_MORE_POKEMON = "fetchMorePokemon"
 
         fun factory(host: HostViewModel) = viewModelFactory {
             initializer {

@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentPreviewBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
+import com.sotirisapak.libs.pokemonexplorer.core.app.setNavigationResult
 
 class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
 
@@ -91,7 +92,10 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
      * @since 1.0.0
      */
     override fun onBack() {
-        viewModel.onBackPressed { findNavController().popBackStack() }
+        viewModel.onBackPressed {
+            setNavigationResult("requireUpdate", viewModel.returnRefreshListSignal)
+            findNavController().popBackStack()
+        }
     }
 
 }

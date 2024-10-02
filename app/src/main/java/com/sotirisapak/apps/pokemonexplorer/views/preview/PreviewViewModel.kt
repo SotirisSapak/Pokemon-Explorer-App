@@ -6,6 +6,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.backend.local.services.FavoritesService
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.mutableLiveData
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
 
@@ -22,13 +26,38 @@ class PreviewViewModel(
     /** The pokemon that is selected from previous page */
     val selectedPokemon = host.selectedPokemon
 
+    var returnRefreshListSignal = false
+
+    init {
+        onFavoriteSelection()
+    }
+
     override fun onBackPressed(action: () -> Unit) {
         super.onBackPressed(action)
         // remove the selected pokemon from host viewModel
         host.selectedPokemon = Pokemon()
     }
 
+    fun onFavoriteSelection() = newJob(
+        tag = TAG_CONFIGURE_FAVORITE,
+        notifyException = false
+    ) {
+        properties.progress.set()
+        properties.error.clear()
+        onBackground {
+            if(favoritesService.isFavorite(selectedPokemon)) {
+                favoritesService.deleteFromFavorites(selectedPokemon)
+            } else {
+                favoritesService.insertToFavorites(selectedPokemon)
+            }
+        }
+        properties.progress.clear()
+        returnRefreshListSignal = true
+    }
+
     companion object {
+
+        const val TAG_CONFIGURE_FAVORITE = "configureFavOption"
 
         fun factory(host: HostViewModel) = viewModelFactory {
             initializer {

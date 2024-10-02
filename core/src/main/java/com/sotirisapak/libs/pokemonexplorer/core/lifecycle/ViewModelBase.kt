@@ -5,6 +5,7 @@ import androidx.annotation.UiThread
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
@@ -72,11 +73,11 @@ open class ViewModelBase: ViewModel() {
         val proceed =  MutableLiveData(false)
 
         /**
-         * A map to hold all the jobs that are running in [viewModelScope]
+         * A new job instance to hold current job
          * @author SotirisSapak
          * @since 1.0.0
          */
-        val jobs = mutableMapOf<String, Job>()
+        var job: Job = Job()
 
     }
 
@@ -89,61 +90,14 @@ open class ViewModelBase: ViewModel() {
     val properties = Props()
 
     /**
-     * Finish a pending job filtered by given [tag]. If you use sequential logic with no more than
-     * one job at a time then leave tag as is.
-     * @param tag the job tag name to finish
-     * @author SotirisSapak
-     * @since 1.0.0
-     */
-    @UiThread
-    fun finishJobByTag(tag: String = TAG_JOB_NO_NAME) {
-        properties.jobs.forEach { (key, job) ->
-            if(tag == key) {
-                Log.d("finishJobByTag", "Job found with tag \"$tag\" -> Set to COMPLETE ")
-                // check if this job is active
-                if(job.isActive) {
-                    job.cancel()
-                    return@forEach
-                }
-            }
-        }
-        // remove job from list
-        val jobTagRemoved = properties.jobs.remove(tag)
-        Log.d("finishJobByTag", "Job removed! (${jobTagRemoved})")
-    }
-
-    /**
-     * Finish all jobs except the one with the given [tag].
-     * @param tag the job tag name to exclude from termination
-     * @author SotirisSapak
-     * @since 1.0.0
-     */
-    fun finishAllJobsExceptTag(tag: String = TAG_JOB_NO_NAME) {
-        properties.jobs.forEach { (key, job) ->
-            if(tag != key) {
-                // check if this job is active
-                if(job.isActive) {
-                    try {
-                        job.cancel()
-                    } catch (ex: Exception) {
-                        Log.e(tag, ex.message ?: "Unknown error")
-                    }
-                    // remove job from list
-                    properties.jobs.remove(tag)
-                }
-            }
-        }
-    }
-
-    /**
      * Finish all pending jobs unconditionally.
      * @author SotirisSapak
      * @since 1.0.0
      */
-    @UiThread
-    fun finishAllJobs() {
-        if(properties.jobs.isNotEmpty()) {
-            properties.jobs.forEach { (key, _) -> finishJobByTag(key) }
+    fun finishJob() {
+        if(properties.job.isActive) {
+            properties.job.cancel()
+            properties.progress.clear()
         }
     }
 
@@ -163,15 +117,13 @@ open class ViewModelBase: ViewModel() {
      */
     fun newJob(
         tag: String = TAG_JOB_NO_NAME,
-        notifyException: Boolean = true,
+        notifyException: Boolean = false,
         action: suspend (tag: String) -> Unit
     ) {
         Log.d(tag, "Terminate possible pending job and then create a new one")
-        finishJobByTag(tag)
-        Log.d(tag, "Start $tag...")
-        properties.jobs[tag] = viewModelScope.launch {
+        finishJob()
+        properties.job = viewModelScope.launch {
             try {
-                Log.d(tag, "Execute action...")
                 action.invoke(tag)
             } catch (ex: Exception) {
                 Log.e(tag, ex.message ?: "Unknown error")
@@ -199,14 +151,12 @@ open class ViewModelBase: ViewModel() {
      */
     fun newBackgroundJob(
         tag: String = TAG_JOB_NO_NAME,
-        notifyException: Boolean = true,
+        notifyException: Boolean = false,
         action: suspend () -> Unit
     ) {
         Log.d(tag, "Terminate possible pending job and then create a new one")
-        finishJobByTag(tag)
-        properties.jobs[tag] = viewModelScope.launch {
+        properties.job = viewModelScope.launch {
             try {
-                Log.d(tag, "Start...")
                 onBackground { action.invoke() }
             } catch (ex: Exception) {
                 if(notifyException) properties.error.set(ex.message ?: "Unknown error")
@@ -240,12 +190,16 @@ open class ViewModelBase: ViewModel() {
         action: suspend () -> ApiResult<T, String>,
         onProgress: (progress: Boolean) -> Unit = { properties.progress.set(it) },
         onError: (e: String) -> Unit = { properties.error.set(it) },
+        after: (suspend (res: T) -> Unit)? = null,
         onSuccess: (res: T) -> Unit
     ) = newBackgroundJob(tag) {
         onUiThread { onProgress.invoke(true) }
         when(val response = action.invoke()) {
             is ApiResult.Failure -> onUiThread { onError.invoke(response.error) }
-            is ApiResult.Success -> onUiThread { onSuccess.invoke(response.data) }
+            is ApiResult.Success -> onUiThread {
+                onSuccess.invoke(response.data)
+                after?.invoke(response.data)
+            }
         }
         onUiThread { onProgress.invoke(false) }
     }
@@ -268,7 +222,7 @@ open class ViewModelBase: ViewModel() {
      */
     @UiThread
     open fun onBackPressed(action: () -> Unit = {}) {
-        finishAllJobs()
+        finishJob()
         action.invoke()
     }
 

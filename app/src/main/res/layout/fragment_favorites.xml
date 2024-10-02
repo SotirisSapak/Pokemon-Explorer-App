@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.sotirisapak.apps.pokemonexplorer.views.favorites.FavoritesViewModel" />
@@ -65,7 +66,58 @@
                 android:layout_marginBottom="5dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <!-- End Header layout -->
+        <!-- End -->
+
+        <!-- Region Empty State layout -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutEmptyState"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="@{viewModel.itemsCount == 0 &amp;&amp; !viewModel.properties.progress? View.VISIBLE : View.GONE}">
+
+            <!-- Layout to center empty state components -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutEmptyStateContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <!-- ImageView to show the empty state icon! -->
+                <ImageView
+                    android:id="@+id/imageEmptyState"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="10dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/image_favorites_empty_state"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="?colorPrimary" />
+
+                <!-- Text to show to empty state prompt -->
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/TextView.Header.Item"
+                    android:id="@+id/textEmptyStatePrompt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="There is not any favorite pokemon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageEmptyState"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:gravity="center"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- End -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPokemon"

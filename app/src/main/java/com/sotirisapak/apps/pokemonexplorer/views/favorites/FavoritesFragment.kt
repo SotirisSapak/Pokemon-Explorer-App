@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.sotirisapak.apps.pokemonexplorer.R
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentFavoritesBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 import com.sotirisapak.libs.pokemonexplorer.core.app.observe
+import com.sotirisapak.libs.pokemonexplorer.core.app.observeNavigationResult
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
 import com.sotirisapak.libs.pokemonexplorer.framework.bottomRoundedInsets
 import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
@@ -97,7 +99,8 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
         // ? ------------------ Utilities ------------------
         attachLayoutInsets()
         // ? ------------------ Utilities ------------------
-        observeStates()
+        observeProceed()
+        observeNavigationResultFromPreview()
         // ? ------------------ Listeners ------------------
         binding.buttonBack.setOnClickListener(onBackClick)
     }
@@ -116,26 +119,6 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
     // ? ==========================================================================================
     // ? Utilities
     // ? ==========================================================================================
-    private fun observeStates() = observe(viewModel.listState) {
-        when(it) {
-            FavoritesViewModel.States.Idle -> {}
-            FavoritesViewModel.States.Fetching -> {}
-            FavoritesViewModel.States.NoItems -> {
-
-            }
-            FavoritesViewModel.States.Success -> {
-
-            }
-            else -> {}
-        }
-        // reset state to idle
-        viewModel.listState.clear(FavoritesViewModel.States.Idle)
-    }
-
-
-    // ? ==========================================================================================
-    // ? Utilities
-    // ? ==========================================================================================
     private fun attachLayoutInsets() {
         binding.layoutHeader.topRoundedInsets()
         binding.recyclerViewPokemon.bottomRoundedInsets()
@@ -143,10 +126,25 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
 
 
     // ? ==========================================================================================
+    // ? Observers
+    // ? ==========================================================================================
+    private fun observeNavigationResultFromPreview() =
+        observeNavigationResult<Boolean>("requireUpdate") { listRequireUpdate ->
+        if(listRequireUpdate) { viewModel.refresh() }
+    }
+    private fun observeProceed() = observe(viewModel.properties.proceed) {
+        if(it) {
+            findNavController().navigate(R.id.actionFavouritesToPreview)
+            viewModel.properties.proceed.clear()
+        }
+    }
+
+
+    // ? ==========================================================================================
     // ? Listeners
     // ? ==========================================================================================
     private val onBackClick = View.OnClickListener {
-        viewModel.onBackPressed { baseActivity.onBackPressedDispatcher.onBackPressed() }
+        viewModel.onBackPressed { findNavController().popBackStack() }
     }
 
 

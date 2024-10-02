@@ -24,15 +24,7 @@ class FavoritesViewModel(
     private val favoritesService: FavoritesService
 ): ViewModelBase() {
 
-    enum class States {
-        Idle,
-        Fetching,
-        NoItems,
-        Success
-    }
 
-    /** The state of the list  */
-    val listState = States.Idle.mutableLiveData()
 
     val favoritesAdapter = PokemonAdapter { _, clickedPokemon ->
         hostViewModel.selectedPokemon = clickedPokemon
@@ -40,26 +32,26 @@ class FavoritesViewModel(
         properties.proceed.set()
     }
 
-    init {
-        // initializeFavoritesList()
-    }
+    private val items: MutableList<Pokemon> = mutableListOf()
+    val itemsCount = 0.mutableLiveData
 
-    private fun initializeFavoritesList() = newJob(TAG_FAVORITES_INITIALIZATION) {
+    init { getFavorites() }
+
+    private fun getFavorites() = newJob(TAG_FAVORITES_INITIALIZATION) {
+        items.clear()
+        itemsCount.set(0)
         properties.progress.set()
-        listState.set(States.Fetching)
         // run the fetch process
         var response: MutableList<Pokemon> = mutableListOf()
         onBackground { response = favoritesService.getFavorites().toMutableList() }
         // stop the progress as the fetch action finished
         properties.progress.clear()
-        // Change the state based on the result
-        if(response.isEmpty()) {
-            listState.set(States.NoItems)
-        } else {
-            // list has actually some pokemon
-            favoritesAdapter.submitList(response) { listState.set(States.Success) }
-        }
+        items.addAll(response)
+        itemsCount.set(items.size)
+        favoritesAdapter.submitList(response)
     }
+
+    fun refresh() = getFavorites()
 
     companion object {
 

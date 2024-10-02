@@ -10,7 +10,6 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import android.view.animation.AnimationUtils
 import com.sotirisapak.apps.pokemonexplorer.R
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentHomeBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
@@ -138,10 +137,10 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
         if(it) {
             // in order to avoid unwanted results and save some network traffic...remove any pending
             // job from stack
-            viewModel.finishAllJobs()
-            findNavController().navigate(R.id.actionHomeToPreview)
+            // viewModel.finishAllJobs()
             // clear the property
             viewModel.properties.proceed.clear()
+            findNavController().navigate(R.id.actionHomeToPreview)
         }
     }
 
@@ -160,7 +159,7 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     private val onFavoriteClick = View.OnClickListener {
         // in order to avoid unwanted results and save some network traffic...remove any pending
         // job from stack
-        viewModel.finishAllJobs()
+        viewModel.finishJob()
         findNavController().navigate(R.id.action_homeToFavorites)
     }
 
