@@ -1,7 +1,6 @@
 package com.sotirisapak.apps.pokemonexplorer.views.home
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.sotirisapak.apps.pokemonexplorer.R
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentHomeBinding
+import com.sotirisapak.apps.pokemonexplorer.views.host.HostActivity
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 import com.sotirisapak.libs.pokemonexplorer.core.app.observe

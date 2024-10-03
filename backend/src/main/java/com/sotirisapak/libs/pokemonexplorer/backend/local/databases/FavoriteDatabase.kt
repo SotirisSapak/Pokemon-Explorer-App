@@ -1,7 +1,9 @@
-package com.sotirisapak.libs.pokemonexplorer.backend.local
+package com.sotirisapak.libs.pokemonexplorer.backend.local.databases
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.sotirisapak.libs.pokemonexplorer.backend.local.converters.StatsConverter
 import com.sotirisapak.libs.pokemonexplorer.backend.local.dao.FavoritesDao
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 
@@ -10,7 +12,12 @@ import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
  * @author SotirisSapak
  * @since 1.0.0
  */
-@Database(entities = [Pokemon::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Pokemon::class],
+    version = 1,
+    exportSchema = false
+)
+@TypeConverters(StatsConverter::class)
 abstract class FavoriteDatabase: RoomDatabase() {
 
     /**

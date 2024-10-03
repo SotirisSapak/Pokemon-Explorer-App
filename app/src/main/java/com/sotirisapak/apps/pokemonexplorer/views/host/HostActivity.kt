@@ -3,17 +3,12 @@ package com.sotirisapak.apps.pokemonexplorer.views.host
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
-import com.sotirisapak.apps.pokemonexplorer.R
 import com.sotirisapak.apps.pokemonexplorer.databinding.ActivityHostBinding
 import com.sotirisapak.libs.pokemonexplorer.core.app.ActivityBase
 
 /**
- * Nothing more than a standard host activity to support navigation system using a bottom navigation
- * view and shared properties within hostViewModel instance
+ * Nothing more than a standard host activity to support navigation system with shared properties
+ * within hostViewModel instance
  * @author SotirisSapak
  * @since 1.0.0
  */

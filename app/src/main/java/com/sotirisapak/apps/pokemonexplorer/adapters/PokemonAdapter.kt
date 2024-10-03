@@ -1,6 +1,5 @@
 package com.sotirisapak.apps.pokemonexplorer.adapters
 
-import android.graphics.Paint.Align
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.sotirisapak.apps.pokemonexplorer.databinding.RvItemPokemonBinding

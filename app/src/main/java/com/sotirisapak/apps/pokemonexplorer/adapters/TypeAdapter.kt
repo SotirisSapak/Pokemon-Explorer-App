@@ -3,13 +3,10 @@ package com.sotirisapak.apps.pokemonexplorer.adapters
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import com.sotirisapak.apps.pokemonexplorer.databinding.RvItemTypeBinding
 import com.sotirisapak.apps.pokemonexplorer.models.Type
 import com.sotirisapak.libs.pokemonexplorer.core.components.BaseAdapter
-import com.sotirisapak.libs.pokemonexplorer.framework.ThemeSchema
 import com.sotirisapak.libs.pokemonexplorer.framework.dp
-import com.sotirisapak.libs.pokemonexplorer.framework.px
 
 /**
  * The adapter for the recycler view that holds the pokemon types
@@ -61,7 +58,7 @@ class TypeAdapter(
         // when a type is selected, the application should invert the colors of the card and text
         // accordingly.
         if(item.isSelected) {
-            binding.cardType.strokeWidth = 2.dp
+            binding.cardType.strokeWidth = 3.dp
             binding.cardType.cardElevation = 12.dp.toFloat()
         } else {
             binding.cardType.strokeWidth = 0

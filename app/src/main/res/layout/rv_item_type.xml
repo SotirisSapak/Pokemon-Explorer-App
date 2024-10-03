@@ -21,7 +21,7 @@
         android:focusable="true"
         app:cardBackgroundColor="?colorSurfaceContainerHigh"
         app:strokeColor="?colorPrimary"
-        app:strokeWidth="1dp"
+        app:strokeWidth="2dp"
         app:cardElevation="12dp"
         android:outlineAmbientShadowColor="@android:color/transparent"
         android:outlineSpotShadowColor="?colorPrimary">
@@ -46,7 +46,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:fontFamily="@font/font_medium" />
+                app:fontFamily="@font/font_semibold" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,7 +1,7 @@
 package com.sotirisapak.libs.pokemonexplorer.backend.remote.services
 
 import android.util.Log
-import com.sotirisapak.libs.pokemonexplorer.backend.PokemonApi
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.PokemonApi
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.backend.models.PokemonType
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.endpoints.PokemonEndpoints

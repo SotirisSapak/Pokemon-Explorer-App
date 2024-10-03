@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.favorites.FavoritesFragment"
-        android:background="?android:attr/colorBackground">
+        android:background="?android:attr/colorBackground"
+        android:animateLayoutChanges="true">
 
         <!--
             Misc component...Show the home icon at the top right corner to show
@@ -54,7 +55,7 @@
                 app:layout_constraintStart_toEndOf="@+id/buttonBack"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Button to open the favourites tab -->
+            <!-- Button to go back -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonBack"
                 style="@style/Widget.Material3.Button.IconButton"
@@ -113,16 +114,16 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPokemon"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:clipToPadding="false"
             android:paddingTop="10dp"
             android:paddingBottom="20dp"
             android:adapter="@{viewModel.favoritesAdapter}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layoutHeader"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:listitem="@layout/rv_item_pokemon" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

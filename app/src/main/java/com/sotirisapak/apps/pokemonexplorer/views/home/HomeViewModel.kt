@@ -24,6 +24,9 @@ import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 
 /**
  * ViewModel implementation for [HomeFragment]
+ * @param hostViewModel the [HostViewModel] instance to manipulate [HostViewModel.selectedPokemon] property
+ * @param typeService the api service to provide methods to manage pokemon types
+ * @param pokemonService the api service to provide methods to manage pokemon
  * @author SotirisSapak
  * @since 1.0.0
  */
@@ -182,8 +185,6 @@ class HomeViewModel(
     /**
      * __TAG__ -> [TAG_FETCH_SELECTED_TYPE_DATA]
      *
-     * __COMPLEXITY__ -> Medium due to extended log output
-     *
      * Method to fetch the data of the selected type. No need to pass a parameter cause the [selectedPokemonType]
      * will be used to fetch its data.
      *
@@ -230,8 +231,6 @@ class HomeViewModel(
     /**
      * __TAG__ -> [TAG_FETCH_POKEMON]
      *
-     * __COMPLEXITY -> Low
-     *
      * In order to execute this method properly, you need to already have a configured [pokemonTypes]
      * list with all the [PokemonType.TypePokemon] information to get the [PokemonType.TypePokemon.PokemonInformation.url]
      * and fetch the information about pokemon. This method, by default, will fetch pokemon list
@@ -244,7 +243,7 @@ class HomeViewModel(
     private suspend fun fetchPokemon() {
         properties.progress.set()
         onBackground {
-            val paginatedList = configurePagination(TAG_FETCH_POKEMON, pokemonTypes)
+            val paginatedList = configurePagination(pokemonTypes)
             // now, handle pokemon pagination fetching using fetchPokemon() method
             paginatedList.forEach { item ->
                 when(val response = pokemonService.getPokemonByUrl(item.pokemonInformation.url)) {
@@ -270,13 +269,13 @@ class HomeViewModel(
 
     /**
      * Task to configure pagination indexes and list items to fetch only those
-     * @param tag the tag name to preview in log file. Default is [TAG_FETCH_POKEMON]
      * @param listToPaginate the list of items to use in pagination.
      * @return the paginated list by [Pagination.index] and [Pagination.offset]
      * @author SotirisSapak
      * @since 1.0.0
      */
-    private fun <T> configurePagination(tag: String = TAG_FETCH_POKEMON, listToPaginate: List<T>): List<T> {
+    private fun <T> configurePagination(listToPaginate: List<T>): List<T> {
+        val tag = TAG_FETCH_POKEMON
         Log.d(tag, "---------------------------------------------------------------")
         Log.d(tag, "Configure pagination")
         Log.d(tag, "---------------------------------------------------------------")
@@ -310,12 +309,24 @@ class HomeViewModel(
         return resultList
     }
 
-
-    fun loadMoreData() = newJob(tag = TAG_FETCH_MORE_POKEMON, notifyException = false){
+    /**
+     * __TAG__ -> [TAG_FETCH_MORE_POKEMON]
+     *
+     * When user reaches the end of the list, this method will be triggered in order to fetch more
+     * pokemon filter by selected type using pagination
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun loadMoreData() = newJob(TAG_FETCH_MORE_POKEMON){
         // check if is in progress state and if is then do not re-fetch again
         if(!properties.progress.nonNullValue) fetchPokemon()
     }
 
+    /**
+     * Refresh list using [loadTypeData] method
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
     fun refresh() = loadTypeData()
 
 

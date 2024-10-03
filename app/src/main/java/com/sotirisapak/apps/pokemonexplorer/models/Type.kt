@@ -3,6 +3,9 @@ package com.sotirisapak.apps.pokemonexplorer.models
 import androidx.recyclerview.widget.DiffUtil
 
 /**
+ *
+ * __HELPER CLASS__
+ *
  * The pokemon type
  * @param id the identifier of the type as mentioned in PokeAPI
  * @param name the type name

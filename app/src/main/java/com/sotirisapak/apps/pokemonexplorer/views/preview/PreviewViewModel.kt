@@ -1,5 +1,6 @@
 package com.sotirisapak.apps.pokemonexplorer.views.preview
 
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -16,6 +17,9 @@ import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
 
 /**
  * ViewModel implementation for [PreviewFragment]
+ * @param host the [HostViewModel] instance to get the [HostViewModel.selectedPokemon] property
+ * @param favoritesService api service to make this pokemon one of user's favorites or remove it from user's
+ * favorites list
  * @author SotirisSapak
  * @since 1.0.0
  */
@@ -43,6 +47,7 @@ class PreviewViewModel(
 
     init {
         fetchFavoriteState()
+        Log.d("selected pokemon", selectedPokemon.toString())
     }
 
     /**
@@ -58,6 +63,8 @@ class PreviewViewModel(
     }
 
     /**
+     * __TAG__ -> [TAG_CONFIGURE_FAVORITE]
+     *
      * Background task to make a pokemon favorite or not in offline database. This method will be called
      * from favorite button click via click listener.
      * @author SotirisSapak
@@ -86,12 +93,13 @@ class PreviewViewModel(
     }
 
     /**
+     * __TAG__ -> [TAG_FETCH_FAVORITE_STATE]
+     *
      * Background task to fetch the pokemon favorite state (if is user's favorite or not)
      * @author SotirisSapak
      * @since 1.0.0
      */
-
-    fun fetchFavoriteState() = newJob(TAG_FETCH_FAVORITE_STATE) {
+    private fun fetchFavoriteState() = newJob(TAG_FETCH_FAVORITE_STATE) {
         properties.progress.set()
         properties.error.clear()
         onBackground {

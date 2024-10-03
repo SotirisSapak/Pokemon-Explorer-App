@@ -16,9 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="34">
+
+        <!--
+            Lock activity orientation to portrait to prevent bad ui design. Due to MVVM architecture,
+            application logic runs perfectly fine, but design is not set to be in landscape mode!
+         -->
         <activity
             android:name=".views.host.HostActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

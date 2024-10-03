@@ -16,8 +16,8 @@ data class PokemonType(
     /**
      * Important class for parsing. This class will hold the pokemon standard information as fetched
      * from type endpoint
-     * @param name the pokemon name
-     * @param url the url to use in order to fetch all information about this pokemon
+     * @param pokemonInformation the pokemon information as new component due to api response style
+     * @param slot the slot property
      * @author SotirisSapak
      * @since 1.0.0
      */
@@ -26,6 +26,13 @@ data class PokemonType(
         var slot: Int = 0
     ) {
 
+        /**
+         * The pokemon information attributes
+         * @param name the name of the pokemon to be fetched
+         * @param url the url to use in order to fetch all attributes of this [Pokemon]
+         * @author SotirisSapak
+         * @since 1.0.0
+         */
         data class PokemonInformation(
             var name: String = "",
             var url: String = ""

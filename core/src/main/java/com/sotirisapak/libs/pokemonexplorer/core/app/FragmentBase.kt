@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -117,19 +119,19 @@ abstract class FragmentBase<VB: ViewBinding>(
      */
     open fun attachTransitions() {
         enterTransition = MaterialSharedAxis(transitionAxis, true).apply {
-            interpolator = LinearOutSlowInInterpolator()
+            interpolator = AccelerateDecelerateInterpolator()
             duration = transitionDuration
         }
-        exitTransition = MaterialSharedAxis(transitionAxis, false).apply {
-            interpolator = LinearOutSlowInInterpolator()
+        exitTransition = MaterialSharedAxis(transitionAxis, true).apply {
+            interpolator = AccelerateDecelerateInterpolator()
             duration = transitionDuration
         }
-        returnTransition = MaterialSharedAxis(transitionAxis, true).apply {
-            interpolator = LinearOutSlowInInterpolator()
+        returnTransition = MaterialSharedAxis(transitionAxis, false).apply {
+            interpolator = AccelerateDecelerateInterpolator()
             duration = transitionDuration
         }
         reenterTransition = MaterialSharedAxis(transitionAxis, false).apply {
-            interpolator = LinearOutSlowInInterpolator()
+            interpolator = AccelerateDecelerateInterpolator()
             duration = transitionDuration
         }
     }

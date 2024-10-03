@@ -12,6 +12,7 @@ import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 import com.sotirisapak.libs.pokemonexplorer.core.app.observe
 import com.sotirisapak.libs.pokemonexplorer.core.app.setNavigationResult
+import com.sotirisapak.libs.pokemonexplorer.framework.bottomRoundedInsets
 import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
 import com.squareup.picasso.Picasso
 
@@ -95,10 +96,12 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
         // ? ------------ Utilities ------------
         attachLayoutInsets()
         provideImageToHeaderViaUrl()
+        provideStats()
         // ? ------------ Observers ------------
         observerForIsFavorite()
         // ? ------------ Listeners ------------
-        binding.cardFavorite.setOnClickListener(onFavoriteClick)
+        binding.buttonFavorite.setOnClickListener(onFavoriteClick)
+        binding.buttonBack.setOnClickListener(onBackClick)
     }
 
     /**
@@ -123,14 +126,16 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
     // ? ==========================================================================================
     private fun attachLayoutInsets(){
         binding.layoutHeader.topRoundedInsets()
+        binding.layoutStats.bottomRoundedInsets()
     }
     private fun provideImageToHeaderViaUrl() {
         Picasso
             .get()
             .load(viewModel.selectedPokemon.sprites.frontDefault)
-            .resize(50, 50)
-            .onlyScaleDown()
             .into(binding.imagePokemonIcon)
+    }
+    private fun provideStats() {
+
     }
 
 
@@ -138,7 +143,7 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
     // ? Observers
     // ? ==========================================================================================
     private fun observerForIsFavorite() = observe(viewModel.isFavorite) {
-        binding.iconFavorite.isSelected = it
+        binding.buttonFavorite.isSelected = it
     }
 
 
@@ -146,5 +151,6 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
     // ? Listeners
     // ? ==========================================================================================
     private val onFavoriteClick = View.OnClickListener { viewModel.onFavoriteSelection() }
+    private val onBackClick = View.OnClickListener { baseActivity.onBackPressedDispatcher.onBackPressed() }
 
 }

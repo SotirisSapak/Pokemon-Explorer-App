@@ -12,9 +12,10 @@ import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
  */
 class HostViewModel: ViewModelBase() {
 
+    /**
+     * This shared property will be used in order to show pokemon information at preview page.
+     */
     var selectedPokemon = Pokemon()
-
-
 
     companion object {
 
