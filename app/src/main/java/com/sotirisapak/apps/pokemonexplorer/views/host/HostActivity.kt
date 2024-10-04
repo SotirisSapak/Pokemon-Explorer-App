@@ -1,6 +1,7 @@
 package com.sotirisapak.apps.pokemonexplorer.views.host
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.viewModels
 import com.sotirisapak.apps.pokemonexplorer.databinding.ActivityHostBinding
