@@ -18,22 +18,3 @@ val Int.px: Int
  */
 val Int.dp: Int
     get() = this * (Resources.getSystem().displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
-
-/**
- * DotPoints converter to use in any xml data binding view
- * @author SotirisSapak
- * @since 1.0.0
- */
-object DP {
-
-    /**
-     * Convert any px metric to dp
-     * @param dp the final dp result
-     * @author SotirisSapak
-     * @since 1.0.0
-     */
-    @JvmStatic
-    fun fromPx(dp: Int) =
-        dp * Resources.getSystem().displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT
-
-}

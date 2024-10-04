@@ -24,14 +24,15 @@
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginEnd="-15dp"
+            android:alpha="0.05"
+            android:importantForAccessibility="no"
+            android:rotation="-30"
             android:src="@drawable/icon_favorite_filled"
-            app:tint="?colorPrimary"
-            android:alpha="0.1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:rotation="-30"
-            android:layout_marginEnd="-10dp"
-            android:importantForAccessibility="no"/>
+            app:tint="?colorPrimary"
+            tools:ignore="ImageContrastCheck,VisualLintBounds" />
 
         <!-- Region Header layout -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +47,7 @@
                 style="@style/TextView.Header"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/menu_title_favorites"
+                android:text="@string/header_favorites"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginVertical="20dp"
@@ -61,20 +62,22 @@
                 style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"
                 app:icon="@drawable/icon_back"
+                app:iconSize="26dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:iconSize="26dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="5dp"/>
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <!-- Divider to separate header from content -->
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:dividerColor="?colorSurfaceContainerHigh"/>
+                app:dividerColor="?colorSurfaceContainerHigh"
+                android:visibility="@{viewModel.itemsCount != 0 || viewModel.properties.progress? View.VISIBLE : View.GONE}"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- End -->
@@ -84,7 +87,7 @@
             android:id="@+id/layoutEmptyState"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:visibility="@{viewModel.itemsCount == 0 &amp;&amp; !viewModel.properties.progress? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.itemsCount != 0 || viewModel.properties.progress? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -96,7 +99,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!-- ImageView to show the empty state icon! -->
+                <!-- Lottie animation library to preview the error state with a slick animation -->
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/lottieEmptyState"
                     android:layout_width="match_parent"
@@ -107,17 +110,34 @@
                     app:lottie_autoPlay="true"
                     app:lottie_rawRes="@raw/animation_favorites_empty_state" />
 
+                <!-- The empty state message -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textEmptyState"
+                    style="@style/TextView.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="40dp"
+                    android:text="@string/favorite_empty_state"
+                    android:textColor="?colorOutline"
+                    android:alpha="0.7"
+                    android:layout_marginBottom="80dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:fontFamily="@font/font_semibold"
+                    android:gravity="center"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- End -->
 
+        <!-- Favorite list recyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPokemon"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="20dp"
+            android:clipToPadding="false"
             android:adapter="@{viewModel.favoritesAdapter}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"

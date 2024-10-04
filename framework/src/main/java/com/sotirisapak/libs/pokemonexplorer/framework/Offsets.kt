@@ -155,4 +155,9 @@ fun View.sideInsets(
  * @author SotirisSapak
  * @since 1.0.0
  */
-fun View.bottomRoundedInsets() = insets(systemInsets, noInsets, systemInsets, systemInsets)
+fun View.bottomRoundedInsets(
+    start: Int = systemInsets,
+    top: Int = noInsets,
+    end: Int = systemInsets,
+    bottom: Int = systemInsets
+) = insets(start, top, end, bottom)

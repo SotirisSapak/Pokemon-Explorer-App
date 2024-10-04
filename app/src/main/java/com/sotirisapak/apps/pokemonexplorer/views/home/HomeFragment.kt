@@ -1,11 +1,12 @@
 package com.sotirisapak.apps.pokemonexplorer.views.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import com.sotirisapak.apps.pokemonexplorer.views.host.HostActivity
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 import com.sotirisapak.libs.pokemonexplorer.core.app.observe
+import com.sotirisapak.libs.pokemonexplorer.core.app.observeNavigationResult
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
 import com.sotirisapak.libs.pokemonexplorer.framework.bottomRoundedInsets
 import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
@@ -104,6 +106,7 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
         attachLayoutInsets()
         // ? ------------ Observers ------------
         observerForProceed()
+        observerForOnFavoritesBack()
         // ? ------------ Listeners ------------
         binding.nestedScrollViewContent.setOnScrollChangeListener(onScrollListener)
         binding.buttonErrorRefresh.setOnClickListener(onErrorRefreshListener)
@@ -143,7 +146,10 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
             findNavController().navigate(R.id.actionHomeToPreview)
         }
     }
-
+    private fun observerForOnFavoritesBack() = observeNavigationResult<Boolean>("onFavoritesBack") {
+        Log.d("observerForOnFavoritesBack", "Value of \"onFavoritesBack\": $it")
+        if(it) viewModel.refreshIfEmpty()
+    }
 
     // ? ==========================================================================================
     // ? Listeners
@@ -159,7 +165,7 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     private val onFavoriteClick = View.OnClickListener {
         // in order to avoid unwanted results and save some network traffic...remove any pending
         // job from stack
-        viewModel.finishJob()
+        viewModel.finishJobIfActive()
         findNavController().navigate(R.id.action_homeToFavorites)
     }
 

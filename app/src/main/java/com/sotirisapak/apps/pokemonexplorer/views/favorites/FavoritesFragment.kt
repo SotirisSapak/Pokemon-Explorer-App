@@ -1,10 +1,10 @@
 package com.sotirisapak.apps.pokemonexplorer.views.favorites
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,9 +15,13 @@ import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.core.app.FragmentBase
 import com.sotirisapak.libs.pokemonexplorer.core.app.observe
 import com.sotirisapak.libs.pokemonexplorer.core.app.observeNavigationResult
+import com.sotirisapak.libs.pokemonexplorer.core.app.setNavigationResult
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
-import com.sotirisapak.libs.pokemonexplorer.framework.bottomRoundedInsets
+import com.sotirisapak.libs.pokemonexplorer.framework.InsetType
+import com.sotirisapak.libs.pokemonexplorer.framework.dp
+import com.sotirisapak.libs.pokemonexplorer.framework.insets
+import com.sotirisapak.libs.pokemonexplorer.framework.systemInsets
 import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
 
 /**
@@ -113,10 +117,7 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override fun onBack() {
-        // at this point...back button should return to home fragment
-        findNavController().popBackStack()
-    }
+    override fun onBack() = onBackImplementation()
 
 
     // ? ==========================================================================================
@@ -124,6 +125,23 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
     // ? ==========================================================================================
     private fun attachLayoutInsets() {
         binding.layoutHeader.topRoundedInsets()
+        binding.recyclerViewPokemon.insets(
+            start = systemInsets,
+            top = 6.dp,
+            bottom = systemInsets,
+            end = systemInsets,
+            type = InsetType.NavBar
+        )
+    }
+    private fun onBackImplementation() {
+        viewModel.onBackPressed {
+            // at this point...back button should return to home fragment and set a navigation result
+            // for the home fragment to refresh list if is empty. This may happen when user click on
+            // favorites list while initializing pokemon list and when user navigate back, list is empty
+            // and in order to fetch pokemon, he/she has to select another category.
+            setNavigationResult("onFavoritesBack", true)
+            findNavController().popBackStack()
+        }
     }
 
 
@@ -147,12 +165,11 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
         }
     }
 
+
     // ? ==========================================================================================
     // ? Listeners
     // ? ==========================================================================================
-    private val onBackClick = View.OnClickListener {
-        viewModel.onBackPressed { findNavController().popBackStack() }
-    }
+    private val onBackClick = View.OnClickListener { onBackImplementation() }
 
 
 }

@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         tools:context=".views.host.HostActivity">
 
-        <!-- 2 components here ... Fragment container and navigation view -->
+        <!-- Single item to host fragment navigation -->
         <androidx.fragment.app.FragmentContainerView
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:id="@+id/navHostFragment"

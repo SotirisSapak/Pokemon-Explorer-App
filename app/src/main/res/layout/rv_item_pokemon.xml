@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -34,8 +33,8 @@
             <!-- The imageView to preview the pokemon icon -->
             <ImageView
                 android:id="@+id/imagePokemonIcon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:importantForAccessibility="no"
                 android:layout_gravity="center"/>
 

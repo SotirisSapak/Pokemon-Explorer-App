@@ -90,11 +90,11 @@ open class ViewModelBase: ViewModel() {
     val properties = Props()
 
     /**
-     * Finish all pending jobs unconditionally.
+     * Finish job unconditionally.
      * @author SotirisSapak
      * @since 1.0.0
      */
-    fun finishJob() {
+    fun finishJobIfActive() {
         if(properties.job.isActive) {
             properties.job.cancel()
             properties.progress.clear()
@@ -103,11 +103,8 @@ open class ViewModelBase: ViewModel() {
 
     /**
      * Create a new job instance to execute on viewModel scope. Generated job will automatically be
-     * saved to [Props.jobs] map with [tag] as job name and the actual [Job] as value. If there is
-     * any job active with same [tag] then will be finished first, and re-created.
-     *
-     * If an exception occurs, then the [Props.error] property will be notified if [notifyException]
-     * is enabled (true by default).
+     * saved to [Props.job]. If an exception occurs, then the [Props.error] property will be
+     * notified if [notifyException] is enabled (false by default).
      * @param tag the job name
      * @param notifyException Flag to use in case the [action] throw an exception then the [Props.error]
      * will be notified and set the exception error message by default.
@@ -120,8 +117,7 @@ open class ViewModelBase: ViewModel() {
         notifyException: Boolean = false,
         action: suspend (tag: String) -> Unit
     ) {
-        Log.d(tag, "Terminate possible pending job and then create a new one")
-        finishJob()
+        finishJobIfActive()
         properties.job = viewModelScope.launch {
             try {
                 action.invoke(tag)
@@ -130,17 +126,12 @@ open class ViewModelBase: ViewModel() {
                 if(notifyException) properties.error.set(ex.message ?: "Unknown error")
             }
         }
-        Log.d(tag, "Job terminated successfully")
     }
 
     /**
-     * Create a new job instance to execute on viewModel scope and in background thread. Generated
-     * job will automatically be saved to [Props.jobs] map with [tag] as job name and the
-     * actual [Job] as value. If there is any job active with same [tag] then will be finished
-     * first, and re-created.
-     *
+     * Create a new job instance to execute on viewModel scope and in background thread.
      * If an exception occurs, then the [Props.error] property will be notified if [notifyException]
-     * is enabled (true by default).
+     * is enabled (false by default).
      * @param tag the job name
      * @param notifyException Flag to use in case the [action] throw an exception then the [Props.error]
      * will be notified and set the exception error message by default.
@@ -152,17 +143,16 @@ open class ViewModelBase: ViewModel() {
     fun newBackgroundJob(
         tag: String = TAG_JOB_NO_NAME,
         notifyException: Boolean = false,
-        action: suspend () -> Unit
+        action: suspend (tag: String) -> Unit
     ) {
-        Log.d(tag, "Terminate possible pending job and then create a new one")
+        finishJobIfActive()
         properties.job = viewModelScope.launch {
             try {
-                onBackground { action.invoke() }
+                onBackground { action.invoke(tag) }
             } catch (ex: Exception) {
                 if(notifyException) properties.error.set(ex.message ?: "Unknown error")
             }
         }
-        Log.d(tag, "Job terminated successfully")
     }
 
     /**
@@ -176,8 +166,8 @@ open class ViewModelBase: ViewModel() {
      *     fun onFetch() = newResponseJob(
      *          tag = "tag-response-job",
      *          action = { sampleUseCase() },
-     *          onProgress = { progress.set(it) },
-     *          onError = { error.set(it) }
+     *          onProgress = { properties.progress.set(it) },
+     *          onError = { properties.error.set(it) }
      *     ) { resultModel ->
      *          /* on success execute */
      *     }
@@ -222,7 +212,7 @@ open class ViewModelBase: ViewModel() {
      */
     @UiThread
     open fun onBackPressed(action: () -> Unit = {}) {
-        finishJob()
+        finishJobIfActive()
         action.invoke()
     }
 

@@ -13,7 +13,7 @@ import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
-import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
+import com.sotirisapak.libs.pokemonexplorer.di.PokemonApplication
 
 /**
  * ViewModel implementation for [PreviewFragment]

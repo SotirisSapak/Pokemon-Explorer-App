@@ -37,8 +37,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:rotation="30"
-            android:layout_marginStart="-10dp"
-            android:importantForAccessibility="no"/>
+            android:layout_marginStart="-15dp"
+            android:importantForAccessibility="no"
+            tools:ignore="VisualLintBounds" />
 
         <!-- Region Header layout -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="20dp"
                 android:layout_marginStart="20dp"
-                android:text="@string/menu_title_home"
+                android:text="@string/header_home"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/buttonFavorites"
                 app:layout_constraintStart_toStartOf="parent"
@@ -67,13 +68,14 @@
                 style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
                 app:icon="@drawable/icon_favorite_filled"
+                app:iconSize="26dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:iconSize="26dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="5dp"/>
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <!-- Divider to separate header from content -->
             <com.google.android.material.divider.MaterialDivider
@@ -195,7 +197,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:tint="?colorPrimary"
-                        android:alpha="0.5"
+                        android:alpha="0.7"
                         android:importantForAccessibility="no"/>
 
                     <!-- Error message text -->
@@ -220,7 +222,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:fontFamily="@font/font_medium"
-                        android:text="Refresh"
+                        android:text="@string/home_refresh"
                         android:textColor="?colorOnPrimaryContainer"
                         app:backgroundTint="?colorSurfaceContainerHighest"
                         app:icon="@drawable/icon_refresh"

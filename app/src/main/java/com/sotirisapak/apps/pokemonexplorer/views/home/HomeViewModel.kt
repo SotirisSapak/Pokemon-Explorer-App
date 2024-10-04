@@ -2,6 +2,7 @@ package com.sotirisapak.apps.pokemonexplorer.views.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sotirisapak.apps.pokemonexplorer.adapters.PokemonAdapter
@@ -13,14 +14,13 @@ import com.sotirisapak.libs.pokemonexplorer.backend.models.PokemonType
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.PokemonService
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.TypeService
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.nonNullValue
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
+import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
-import com.sotirisapak.libs.pokemonexplorer.di.components.PokemonApplication
-import androidx.lifecycle.viewModelScope
-import com.sotirisapak.libs.pokemonexplorer.core.extensions.nonNullValue
-import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
+import com.sotirisapak.libs.pokemonexplorer.di.PokemonApplication
 
 /**
  * ViewModel implementation for [HomeFragment]
@@ -50,14 +50,14 @@ class HomeViewModel(
             // we should make program remember if the selected type is the one which is clicked
             if(selectedPokemonType != selectedType) {
                 selectedPokemonType = selectedType
-                finishJob()
+                finishJobIfActive()
                 loadTypeData()
             }
         }
         val pokemonAdapter = PokemonAdapter(
             onPokemonClick = { _, clickedPokemon ->
                 hostViewModel.selectedPokemon = clickedPokemon
-                finishJob()
+                finishJobIfActive()
                 // trigger a signal to view to go to preview fragment
                 properties.proceed.set()
             }
@@ -328,6 +328,32 @@ class HomeViewModel(
      * @since 1.0.0
      */
     fun refresh() = loadTypeData()
+
+    /**
+     * Method to trigger a refresh only if list is empty.
+     *
+     * __UseCase:__
+     *
+     * When user first open application, list has no items. User could open favorites list to preview
+     * his or her favorite pokemon. When user navigate back from favorites, list will remain empty cause
+     * fetching process has been canceled. To load pokemon, user has to click to another category to
+     * start fetching process again. To avoid this, favorites fragment should send a trigger when
+     * user go back and if list is empty then application should restart fetching pokemon from this
+     * selected category.
+     *
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun refreshIfEmpty() {
+        // pokemon list may not be empty but list is not properly bind if pokemonList items is lower
+        // than the offset of the pagination...
+        // Example:
+        // Stop process when pokemonList has 15 items
+        // Offset = 20
+        // List is not bind
+        Log.d("refreshIfEmpty", "Pokemon list count: ${pokemonList.count()}")
+        if(pokemonList.count() < paginationProperties.offset) loadTypeData()
+    }
 
 
     companion object {

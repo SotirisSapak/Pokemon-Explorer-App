@@ -28,13 +28,14 @@
                 style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"
                 app:icon="@drawable/icon_back"
+                app:iconSize="26dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:iconSize="26dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="5dp"/>
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <!-- The pokemon title -->
             <com.google.android.material.textview.MaterialTextView
@@ -53,19 +54,20 @@
                 android:paddingTop="2dp"/>
 
             <com.google.android.material.button.MaterialButton
-                style="@style/Widget.Material3.Button.IconButton"
                 android:id="@+id/buttonFavorite"
+                style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:iconSize="26dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="5dp"
                 android:clickable="@{!viewModel.properties.progress}"
                 android:focusable="@{!viewModel.properties.progress}"
-                app:icon="@drawable/icon_favorite" />
+                app:icon="@drawable/icon_favorite"
+                app:iconSize="26dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- End -->
@@ -99,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp"
-                    android:text="Primary stats"
+                    android:text="@string/preview_header_primary_stats"
                     app:fontFamily="@font/font_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -173,9 +175,9 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- Container for height -->
+                <!-- Container for attack -->
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layoutStatsHeight"
+                    android:id="@+id/layoutStatsAttack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
@@ -183,151 +185,20 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layoutStatsHealth">
 
-                    <!-- The health stat icon -->
+                    <!-- The stat icon -->
                     <ImageView
-                        android:id="@+id/iconStatsHeight"
+                        android:id="@+id/iconStatsAttack"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="15dp"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/icon_height"
+                        android:src="@drawable/icon_attack"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="?colorPrimary" />
-
-                    <!-- The stat name -->
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/textStatsHeightName"
-                        style="@style/TextView.Body"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="height"
-                        app:fontFamily="@font/font_semibold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/iconStatsHeight"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- The stat value -->
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/textStatsHeightValue"
-                        style="@style/TextView.Body"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="15dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="@{String.valueOf(viewModel.selectedPokemon.height)}"
-                        android:textSize="16sp"
-                        app:fontFamily="@font/font_black"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- Divider separator -->
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="3dp"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/dashed_line_drawable"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Container for weight -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layoutStatsWeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layoutStatsHeight">
-
-                    <!-- The health stat icon -->
-                    <ImageView
-                        android:id="@+id/iconStatsWeight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="15dp"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/icon_weight"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="?colorPrimary" />
-
-                    <!-- The stat name -->
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/textStatsWeightName"
-                        style="@style/TextView.Body"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="Weight"
-                        app:fontFamily="@font/font_semibold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/iconStatsWeight"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- The stat value -->
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/textStatsWeightValue"
-                        style="@style/TextView.Body"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="15dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="@{String.valueOf(viewModel.selectedPokemon.weight)}"
-                        android:textSize="16sp"
-                        app:fontFamily="@font/font_black"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- Divider separator -->
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="3dp"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/dashed_line_drawable"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Header for secondary stats -->
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/textHeaderStats"
-                    style="@style/TextView.Header.Item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="Stats"
-                    app:fontFamily="@font/font_black"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layoutStatsWeight" />
-
-                <!-- Container for attack -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layoutStatsAttack"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textHeaderStats">
 
                     <!-- The stat name -->
                     <com.google.android.material.textview.MaterialTextView
@@ -341,7 +212,7 @@
                         android:text="@{viewModel.selectedPokemon.stats.get(1).stat.statName}"
                         app:fontFamily="@font/font_semibold"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/iconStatsAttack"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <!-- The stat value -->
@@ -370,7 +241,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- Container for defense -->
+                <!-- Container for Defense -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layoutStatsDefense"
                     android:layout_width="match_parent"
@@ -379,6 +250,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layoutStatsAttack">
+
+                    <!-- The stat icon -->
+                    <ImageView
+                        android:id="@+id/iconStatsDefense"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="15dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/icon_defense"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="?colorPrimary" />
 
                     <!-- The stat name -->
                     <com.google.android.material.textview.MaterialTextView
@@ -392,7 +278,7 @@
                         android:text="@{viewModel.selectedPokemon.stats.get(2).stat.statName}"
                         app:fontFamily="@font/font_semibold"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/iconStatsDefense"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <!-- The stat value -->
@@ -421,6 +307,122 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- Header for secondary stats -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textHeaderStats"
+                    style="@style/TextView.Header.Item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/preview_header_secondary_stats"
+                    app:fontFamily="@font/font_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layoutStatsDefense" />
+
+                <!-- Container for weight -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutStatsWeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textHeaderStats">
+
+                    <!-- The stat name -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/textStatsWeightName"
+                        style="@style/TextView.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="@string/preview_stat_weight"
+                        app:fontFamily="@font/font_semibold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- The stat value -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/textStatsWeightValue"
+                        style="@style/TextView.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="@{String.valueOf(viewModel.selectedPokemon.weight)}"
+                        android:textSize="16sp"
+                        app:fontFamily="@font/font_black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Divider separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/dashed_line_drawable"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Container for height -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutStatsHeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layoutStatsWeight">
+
+                    <!-- The stat name -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/textStatsHeightName"
+                        style="@style/TextView.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="@string/preview_stat_height"
+                        app:fontFamily="@font/font_semibold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- The stat value -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/textStatsHeightValue"
+                        style="@style/TextView.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="@{String.valueOf(viewModel.selectedPokemon.height)}"
+                        android:textSize="16sp"
+                        app:fontFamily="@font/font_black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Divider separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/dashed_line_drawable"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
                 <!-- Container for special attack -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layoutStatsSpecialAttack"
@@ -429,7 +431,7 @@
                     android:layout_marginHorizontal="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layoutStatsDefense">
+                    app:layout_constraintTop_toBottomOf="@+id/layoutStatsHeight">
 
                     <!-- The stat name -->
                     <com.google.android.material.textview.MaterialTextView

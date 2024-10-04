@@ -44,7 +44,7 @@ class PokemonAdapter(
         Picasso
             .get()
             .load(item.sprites.frontDefault)
-            .resize(50, 50)
+            .resize(40, 40)
             .centerCrop()
             .into(binding.imagePokemonIcon)
         // attach click listener

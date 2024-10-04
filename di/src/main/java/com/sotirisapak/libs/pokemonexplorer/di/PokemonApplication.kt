@@ -1,4 +1,4 @@
-package com.sotirisapak.libs.pokemonexplorer.di.components
+package com.sotirisapak.libs.pokemonexplorer.di
 
 import android.app.Application
 import androidx.room.Room
@@ -16,9 +16,24 @@ import retrofit2.Retrofit
  */
 class PokemonApplication: Application() {
 
+    /**
+     * The retrofit instance to provide api to services
+     */
     private lateinit var retrofit: Retrofit
+
+    /**
+     * The service to provide api utilities for pokemon types
+     */
     private lateinit var typeService: TypeService
+
+    /**
+     * The service to provide api utilities for pokemon
+     */
     private lateinit var pokemonService: PokemonService
+
+    /**
+     * The service to provide access to local database in order to manipulate user's favorite pokemon
+     */
     private lateinit var favoritesService: FavoritesService
 
     /**
@@ -36,15 +51,37 @@ class PokemonApplication: Application() {
         favoritesService = FavoritesService(initializeFavoritesDatabase())
     }
 
+    /**
+     * Method to initialize room database for favorites.
+     * @return return a new [FavoriteDatabase] instance
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
     private fun initializeFavoritesDatabase() = Room.databaseBuilder(
-        this,
-        FavoriteDatabase::class.java,
-        "database-favorites"
+        context = this,
+        klass = FavoriteDatabase::class.java,
+        name = "database-favorites"
     ).build()
 
-
+    /**
+     * Get the initialized [typeService] instance
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
     fun getTypeService() = typeService
+
+    /**
+     * Get the initialized [pokemonService] instance
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
     fun getPokemonService() = pokemonService
+
+    /**
+     * Get the initialized [favoritesService] instance
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
     fun getFavoritesService() = favoritesService
 
 }
