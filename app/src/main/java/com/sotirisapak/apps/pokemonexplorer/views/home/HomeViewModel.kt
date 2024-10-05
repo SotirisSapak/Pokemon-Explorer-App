@@ -268,6 +268,9 @@ class HomeViewModel(
 
 
     /**
+     * *(Tried to extract this method as [List] extension with T as generic but when pagination applied
+     * a weird recyclerView animation appeared so I leave code as is!)*
+     *
      * Task to configure pagination indexes and list items to fetch only those
      * @param listToPaginate the list of items to use in pagination.
      * @return the paginated list by [Pagination.index] and [Pagination.offset]

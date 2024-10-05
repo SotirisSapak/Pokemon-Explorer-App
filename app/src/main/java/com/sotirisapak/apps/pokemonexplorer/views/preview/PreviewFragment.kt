@@ -96,7 +96,6 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
         // ? ------------ Utilities ------------
         attachLayoutInsets()
         provideImageToHeaderViaUrl()
-        provideStats()
         // ? ------------ Observers ------------
         observerForIsFavorite()
         // ? ------------ Listeners ------------
@@ -133,9 +132,6 @@ class PreviewFragment : FragmentBase<FragmentPreviewBinding>() {
             .get()
             .load(viewModel.selectedPokemon.sprites.frontDefault)
             .into(binding.imagePokemonIcon)
-    }
-    private fun provideStats() {
-
     }
 
 
