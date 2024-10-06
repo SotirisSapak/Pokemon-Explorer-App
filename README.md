@@ -78,6 +78,7 @@ Library to provide dependencies to application. At the moment this library conta
 #### Backend
 Library to manage all the business logic of the application. Contains both remote and local repositories such as <code>PokemonService</code> or <code>FavoritesService</code> along with data models. 
 
+<br/>
 
 
 ## License
