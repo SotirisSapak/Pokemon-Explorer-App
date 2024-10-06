@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName
  */
 data class PokemonType(
     var name: String = "",
-    @SerializedName("pokemon") val pokemonList: List<TypePokemon> = emptyList()
+    @SerializedName("pokemon") val pokemonList: List<TypePokemon> = emptyList(),
 ) {
     /**
      * Important class for parsing. This class will hold the pokemon standard information as fetched

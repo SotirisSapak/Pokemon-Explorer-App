@@ -1,6 +1,5 @@
 package com.sotirisapak.libs.pokemonexplorer.framework
 
-import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import com.google.android.material.R

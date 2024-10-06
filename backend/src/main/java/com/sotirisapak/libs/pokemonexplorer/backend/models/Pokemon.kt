@@ -74,7 +74,6 @@ data class Pokemon(
 
     }
 
-
 }
 
 
