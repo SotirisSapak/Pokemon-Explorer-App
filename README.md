@@ -9,10 +9,10 @@
 <br/>
 <br/>
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Version](https://img.shields.io/github/v/release/SotirisSapak/Pokemon-Explorer-App)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-
+<br/>
 <h2 align="center">Abstract</h2>
 
 Create a Pokémon Explorer App on android platform using the PokéAPI to fetch data about Pokémon from the 10 most popular types: <b>Fire, Water, Grass, Electric, Dragon, Psychic, Ghost, Dark, Steel, and Fairy.</b>
