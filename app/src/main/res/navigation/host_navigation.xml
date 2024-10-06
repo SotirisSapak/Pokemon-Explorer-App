@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/host_navigation"
+    app:startDestination="@id/action_home">
+
+    <fragment
+        android:id="@+id/action_home"
+        android:name="com.sotirisapak.apps.pokemonexplorer.views.home.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/actionHomeToPreview"
+            app:destination="@id/previewFragment" />
+        <action
+            android:id="@+id/action_homeToFavorites"
+            app:destination="@id/action_favorites" />
+    </fragment>
+    <fragment
+        android:id="@+id/action_favorites"
+        android:name="com.sotirisapak.apps.pokemonexplorer.views.favorites.FavoritesFragment"
+        android:label="FavoritesFragment" >
+        <action
+            android:id="@+id/actionFavouritesToPreview"
+            app:destination="@id/previewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewFragment"
+        android:name="com.sotirisapak.apps.pokemonexplorer.views.preview.PreviewFragment"
+        android:label="PreviewFragment" />
+</navigation>

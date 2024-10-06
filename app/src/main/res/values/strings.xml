@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">Pokemon Explorer App</string>
+
+
+    <!-- Region Headers -->
+    <string name="header_home">Home</string>
+    <string name="header_favorites">Favourites</string>
+    <!-- End -->
+
+
+    <!-- Region Home resources -->
+    <string name="home_refresh">Refresh</string>
+    <!-- End -->
+
+
+    <!-- Region Favorite resources -->
+    <string name="favorite_empty_state">Favorites list is empty. Mark a pokemon as favorite to access it without internet connection</string>
+    <!-- End -->
+
+
+    <!-- Region Preview resources -->
+    <string name="preview_header_primary_stats">Base stats</string>
+    <string name="preview_header_secondary_stats">Secondary stats</string>
+    <string name="preview_stat_height">height</string>
+    <string name="preview_stat_weight">weight</string>
+    <!-- End -->
+
 </resources>

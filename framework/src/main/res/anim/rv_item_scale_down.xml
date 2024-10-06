@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:duration="@integer/material_motion_duration_long_2"
+    android:startOffset="@integer/material_motion_duration_medium_2">
+
+    <!-- scale an item from large to small with opacity fade -->
+    <scale
+        android:fromXScale="130%"
+        android:fromYScale="130%"
+        android:toXScale="100%"
+        android:toYScale="100%"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+
+    <!-- opacity animation -->
+    <alpha android:fromAlpha="0" android:toAlpha="1"/>
+
+</set>

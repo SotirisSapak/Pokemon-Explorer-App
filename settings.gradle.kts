@@ -1,3 +1,5 @@
+import java.net.URI
+
 pluginManagement {
     repositories {
         google {
@@ -16,9 +18,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = URI("https://jitpack.io") }
     }
 }
 
 rootProject.name = "Pokemon Explorer App"
 include(":app")
- 
+include(":core")
+include(":framework")
+include(":di")
+include(":backend")

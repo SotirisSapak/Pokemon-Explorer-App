@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="index" type="Integer" />
+        <variable
+            name="pokemon"
+            type="com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground"
+        android:id="@+id/container">
+
+        <!-- CardView to make pokemon image rounded -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Material3.CardView.Filled"
+            android:id="@+id/cardIconWrapper"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginVertical="10dp">
+
+            <!-- The imageView to preview the pokemon icon -->
+            <ImageView
+                android:id="@+id/imagePokemonIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:importantForAccessibility="no"
+                android:layout_gravity="center"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Layout to contain all the relevant pokemon information -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iconOpen"
+            app:layout_constraintStart_toEndOf="@id/cardIconWrapper"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- The name of the pokemon -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textHeader"
+                style="@style/TextView.Header.Item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{pokemon.name}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ImageView to preview the open icon -->
+        <ImageView
+            android:id="@+id/iconOpen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/icon_chevron_right"
+            android:importantForAccessibility="no"
+            app:tint="?colorOnSurfaceVariant"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
