@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.sotirisapak.apps.pokemonexplorer.R
+import com.sotirisapak.apps.pokemonexplorer.adapters.PokemonAdapter
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentFavoritesBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
@@ -37,6 +38,14 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
 
     /** ViewModel instance */
     private val viewModel: FavoritesViewModel by viewModels { FavoritesViewModel.factory(hostViewModel) }
+
+    /**
+     * The adapter to bind to recyclerView
+     */
+    private val pokemonAdapter = PokemonAdapter(
+        onPokemonClick = { _, pokemon -> viewModel.onPokemonClick(pokemon) },
+        onPokemonLongClick = { _, pokemon -> viewModel.onPokemonLongClick(pokemon) }
+    )
 
     /**
      * You have to inflate your dataBinding class as below:
@@ -104,10 +113,12 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
     ) {
         // ? ------------------ Utilities ------------------
         attachLayoutInsets()
-        // ? ------------------ Utilities ------------------
+        attachListAdapter()
+        // ? ------------------ Observers ------------------
         observeProceed()
         observeNavigationResultFromPreview()
         observeLongClickedPokemon()
+        observeItemChanges()
         // ? ------------------ Listeners ------------------
         binding.buttonBack.setOnClickListener(onBackClick)
     }
@@ -132,6 +143,9 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
             end = systemInsets,
             type = InsetType.NavBar
         )
+    }
+    private fun attachListAdapter() {
+        binding.recyclerViewPokemon.adapter = pokemonAdapter
     }
     private fun onBackImplementation() {
         viewModel.onBackPressed {
@@ -160,11 +174,13 @@ class FavoritesFragment : FragmentBase<FragmentFavoritesBinding>() {
     }
     private fun observeLongClickedPokemon() = observe(viewModel.longClickedPokemon) { pokemon ->
         if(pokemon.id != -1) {
-            viewModel.configureFavoriteSelectionOf(pokemon)
+            viewModel.configureFavoriteSelectionOf(pokemon = pokemon)
             viewModel.longClickedPokemon.set(Pokemon())
         }
     }
-
+    private fun observeItemChanges() = observe(viewModel.items) {
+        pokemonAdapter.submitList(it)
+    }
 
     // ? ==========================================================================================
     // ? Listeners

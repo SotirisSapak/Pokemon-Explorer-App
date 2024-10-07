@@ -97,7 +97,7 @@ open class ViewModelBase: ViewModel() {
     fun finishJobIfActive() {
         if(properties.job.isActive) {
             properties.job.cancel()
-            properties.progress.clear()
+            properties.progress.postValue(false)
         }
     }
 

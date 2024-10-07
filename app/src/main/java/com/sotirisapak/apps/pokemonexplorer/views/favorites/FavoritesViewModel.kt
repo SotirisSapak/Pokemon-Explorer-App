@@ -1,52 +1,38 @@
 package com.sotirisapak.apps.pokemonexplorer.views.favorites
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.sotirisapak.apps.pokemonexplorer.adapters.PokemonAdapter
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
-import com.sotirisapak.libs.pokemonexplorer.backend.local.services.FavoritesService
+import com.sotirisapak.libs.pokemonexplorer.backend.local.repositories.FavoritesRepository
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
-import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.mutableLiveData
-import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 import com.sotirisapak.libs.pokemonexplorer.di.PokemonApplication
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel implementation for [FavoritesFragment]
  * @param hostViewModel the viewModel instance of [HostViewModel] in order to manipulate [HostViewModel.selectedPokemon]
  * attribute.
- * @param favoritesService the local database service to manipulate favorites list.
+ * @param favoritesRepository the local database service to manipulate favorites list.
  * @author SotirisSapak
  * @since 1.0.0
  */
 class FavoritesViewModel(
     private val hostViewModel: HostViewModel,
-    private val favoritesService: FavoritesService
+    private val favoritesRepository: FavoritesRepository
 ): ViewModelBase() {
-
-    /**
-     * [PokemonAdapter] for fragment's recyclerView to show all favorites as standard pokemon
-     * list so as to have consistency.
-     */
-    val favoritesAdapter = PokemonAdapter(
-        onPokemonClick = { _, pokemon ->
-            hostViewModel.selectedPokemon = pokemon
-            // trigger to navigate to preview page
-            properties.proceed.set()
-        },
-        onPokemonLongClick =  { _, pokemon ->
-            longClickedPokemon.set(pokemon)
-            return@PokemonAdapter true
-        }
-    )
 
     /**
      * The favorites list as property
      */
-    private val items: MutableList<Pokemon> = mutableListOf()
+    val items: MutableLiveData<MutableList<Pokemon>> = MutableLiveData(mutableListOf())
 
     /**
      * The items of the favorites list as count. This liveData will be used from ui, in order to proper
@@ -64,6 +50,7 @@ class FavoritesViewModel(
     val longClickedPokemon = Pokemon().mutableLiveData()
 
     init {
+        properties.progress.set()
         // fetch favorites list on viewModel initialization
         getFavorites()
     }
@@ -71,47 +58,85 @@ class FavoritesViewModel(
     /**
      * __TAG__ -> [TAG_FETCH_FAVORITES]
      *
+     * __TEST READY__
+     *
      * Background task to get favorites list from local database
+     * @param dispatcher the dispatcher to execute the coroutine task (default is [Dispatchers.IO])
      * @author SotirisSapak
      * @since 1.0.0
      */
-    private fun getFavorites() = newJob(TAG_FETCH_FAVORITES) {
+    fun getFavorites(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
         // reset viewModel properties
-        items.clear()
-        itemsCount.set(0)
-        properties.progress.set()
-        // run the fetch process
-        var response: MutableList<Pokemon> = mutableListOf()
-        onBackground { response = favoritesService.getFavorites().toMutableList() }
-        // stop the progress as the fetch action finished
-        properties.progress.clear()
-        items.addAll(response)
-        itemsCount.set(items.size)
-        favoritesAdapter.submitList(response)
+        finishJobIfActive()
+        properties.progress.postValue(true)
+        items.postValue(emptyList<Pokemon>().toMutableList())
+        itemsCount.postValue(0)
+        var response: MutableList<Pokemon>
+        properties.job = viewModelScope.launch(dispatcher) {
+            response = favoritesRepository.getFavorites().toMutableList()
+            // stop the progress as the fetch action finished
+            properties.progress.postValue(false)
+            items.postValue(response)
+            itemsCount.postValue(response.size)
+        }
     }
 
     /**
      * __TAG__ -> [TAG_CONFIGURE_FAVORITE_POKEMON]
      *
+     * __TEST READY__
+     *
      * Method to be called when a user long click an item from favorites list. This method will remove
      * given [pokemon] from favorites list and trigger also a list refresh to show the deletion result.
      * @param pokemon the pokemon to delete from favorites
+     * @param dispatcher the dispatcher to execute the coroutine task (default is [Dispatchers.IO])
      * @author SotirisSapak
      * @since 1.0.0
      */
-    fun configureFavoriteSelectionOf(pokemon: Pokemon) = newJob(TAG_CONFIGURE_FAVORITE_POKEMON) {
-        properties.progress.set()
-        properties.error.clear()
-        onBackground { favoritesService.deleteFromFavorites(pokemon) }
-        refresh()
+    fun configureFavoriteSelectionOf(dispatcher: CoroutineDispatcher = Dispatchers.IO, pokemon: Pokemon) {
+        properties.progress.postValue(true)
+        properties.error.postValue("")
+        finishJobIfActive()
+        properties.job = viewModelScope.launch(dispatcher) {
+            favoritesRepository.deleteFromFavorites(pokemon)
+            refresh(dispatcher)
+        }
     }
 
     /**
+     *
+     * __TEST READY__
+     *
      * Refresh list by calling [getFavorites] method
+     * @param dispatcher the dispatcher to execute the coroutine task (default is [Dispatchers.IO])
      * @author SotirisSapak
      * @since 1.0.0
      */
-    fun refresh() = getFavorites()
+    fun refresh(dispatcher: CoroutineDispatcher = Dispatchers.IO) = getFavorites(dispatcher)
+
+    /**
+     * Click interaction for pokemon adapter to bind this action when user click at a pokemon
+     * @param pokemon the pokemon instance that user clicked
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun onPokemonClick(pokemon: Pokemon) {
+        hostViewModel.selectedPokemon = pokemon
+        // trigger to navigate to preview page
+        properties.proceed.postValue(true)
+    }
+
+    /**
+     * Long click interaction for pokemon adapter to bind this action when user long click at a pokemon
+     * @param pokemon the pokemon instance that user long clicked
+     * @return true if the event was consumed
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun onPokemonLongClick(pokemon: Pokemon): Boolean {
+        longClickedPokemon.postValue(pokemon)
+        return true
+    }
 
     companion object {
 

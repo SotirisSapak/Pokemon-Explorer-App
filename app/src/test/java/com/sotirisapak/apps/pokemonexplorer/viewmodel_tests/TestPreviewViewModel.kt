@@ -96,16 +96,15 @@ class TestPreviewViewModel {
         viewModel.isFavorite.clear()
         viewModel.selectedPokemon = Pokemon()
     }
-    @Test fun test_goBack() = runTest {
+    @Test fun test_onFavoritesSelectionRefreshListTrigger() = runTest {
         viewModel.isFavorite.clear()
         viewModel.selectedPokemon = FavoritesData.pokemon1
-        favoritesService.deleteFromFavorites(FavoritesData.pokemon1)
-        viewModel.onBackPressed {
-            assertEquals(-1, viewModel.selectedPokemon.id)
-        }
+        viewModel.onFavoriteSelection(coroutineRule.dispatcher)
+        assert(viewModel.returnRefreshListSignal)
         // clear affected properties
         viewModel.isFavorite.clear()
         viewModel.selectedPokemon = Pokemon()
+        favoritesService.deleteFromFavorites(FavoritesData.pokemon1)
     }
 
 }
