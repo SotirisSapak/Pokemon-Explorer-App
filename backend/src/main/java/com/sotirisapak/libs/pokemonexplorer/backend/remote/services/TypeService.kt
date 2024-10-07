@@ -4,6 +4,7 @@ import android.util.Log
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.PokemonApi
 import com.sotirisapak.libs.pokemonexplorer.backend.models.PokemonType
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.endpoints.TypeEndpoints
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.repositories.TypeRepository
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 import retrofit2.Retrofit
 
@@ -13,10 +14,10 @@ import retrofit2.Retrofit
  * @author SotirisSapak
  * @since 1.0.0
  */
-class TypeService(retrofit: Retrofit) {
+class TypeService(retrofit: Retrofit): TypeRepository {
 
     /** The api to reference in order to build the retrofit instance */
-    private val api = retrofit.create(TypeEndpoints::class.java)
+    override val api = retrofit.create(TypeEndpoints::class.java)
 
     /**
      * Get only a specific pokemon type based on given type id
@@ -26,7 +27,7 @@ class TypeService(retrofit: Retrofit) {
      * @author SotirisSapak
      * @since 1.0.0
      */
-    suspend fun getTypeById(id: Int): ApiResult<PokemonType, String> {
+    override suspend fun getTypeById(id: Int): ApiResult<PokemonType, String> {
         try {
             // we should properly execute the retrofit
             val result = api.getTypeById(id)
@@ -42,8 +43,6 @@ class TypeService(retrofit: Retrofit) {
             // result is successful but return a null body
             return ApiResult.onFailure("Response code: ${result.code()} (The request body is null)")
         } catch (ex: Exception) {
-            // log the result and return a failure state
-            Log.e("getTypeById", ex.message ?: "Unknown error occurred")
             return ApiResult.onFailure(ex.message ?: "Unknown error occurred")
         }
     }

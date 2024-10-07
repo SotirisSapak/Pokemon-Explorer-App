@@ -122,7 +122,6 @@ open class ViewModelBase: ViewModel() {
             try {
                 action.invoke(tag)
             } catch (ex: Exception) {
-                Log.e(tag, ex.message ?: "Unknown error")
                 if(notifyException) properties.error.set(ex.message ?: "Unknown error")
             }
         }

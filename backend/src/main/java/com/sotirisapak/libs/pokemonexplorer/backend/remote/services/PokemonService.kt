@@ -1,10 +1,10 @@
 package com.sotirisapak.libs.pokemonexplorer.backend.remote.services
 
-import android.util.Log
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.PokemonApi
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.backend.models.PokemonType
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.endpoints.PokemonEndpoints
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.repositories.PokemonRepository
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 import retrofit2.Retrofit
 
@@ -14,10 +14,10 @@ import retrofit2.Retrofit
  * @author SotirisSapak
  * @since 1.0.0
  */
-class PokemonService(retrofit: Retrofit) {
+class PokemonService(retrofit: Retrofit): PokemonRepository {
 
     /** The api to reference in order to build the retrofit instance */
-    private val api = retrofit.create(PokemonEndpoints::class.java)
+    override val api = retrofit.create(PokemonEndpoints::class.java)
 
     /**
      * Fetch [Pokemon] object based on given [endpointUrl]. This url is referenced from
@@ -29,7 +29,7 @@ class PokemonService(retrofit: Retrofit) {
      * @author SotirisSapak
      * @since 1.0.0
      */
-    suspend fun getPokemonByUrl(endpointUrl: String): ApiResult<Pokemon, String> {
+    override suspend fun getPokemonByUrl(endpointUrl: String): ApiResult<Pokemon, String> {
         try {
             // we should properly execute the retrofit
             val result = api.getPokemon(endpointUrl)
@@ -45,8 +45,6 @@ class PokemonService(retrofit: Retrofit) {
             // result is successful but return a null body
             return ApiResult.onFailure("Response code: ${result.code()} (The request body is null)")
         } catch (ex: Exception) {
-            // log the result and return a failure state
-            Log.e("getPokemonByUrl", ex.message ?: "Unknown error occurred")
             return ApiResult.onFailure(ex.message ?: "Unknown error occurred")
         }
     }
