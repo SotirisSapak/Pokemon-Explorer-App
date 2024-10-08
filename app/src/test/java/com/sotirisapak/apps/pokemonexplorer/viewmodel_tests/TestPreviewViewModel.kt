@@ -1,7 +1,7 @@
 package com.sotirisapak.apps.pokemonexplorer.viewmodel_tests
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.sotirisapak.apps.pokemonexplorer.data.FavoritesData
+import com.sotirisapak.apps.pokemonexplorer.data.PokemonData
 import com.sotirisapak.apps.pokemonexplorer.services.FakeFavoritesService
 import com.sotirisapak.apps.pokemonexplorer.utilities.MainCoroutineRule
 import com.sotirisapak.apps.pokemonexplorer.utilities.getOrAwaitValue
@@ -52,7 +52,7 @@ class TestPreviewViewModel {
 
     @Test fun test_viewModelInit_isNoFavorite() = runTest {
         viewModel.isFavorite.clear()
-        viewModel.selectedPokemon = FavoritesData.pokemon1
+        viewModel.selectedPokemon = PokemonData.pokemon1
         viewModel.fetchFavoriteStateTest(coroutineRule.dispatcher)
         assert(!viewModel.isFavorite.getOrAwaitValue())
 
@@ -62,7 +62,7 @@ class TestPreviewViewModel {
     }
     @Test fun test_viewModelInit_isFavorite() = runTest {
         viewModel.isFavorite.clear()
-        viewModel.selectedPokemon = FavoritesData.pokemon1
+        viewModel.selectedPokemon = PokemonData.pokemon1
         viewModel.onFavoriteSelection(coroutineRule.dispatcher)
         viewModel.fetchFavoriteStateTest(coroutineRule.dispatcher)
         assert(viewModel.isFavorite.getOrAwaitValue())
@@ -74,19 +74,19 @@ class TestPreviewViewModel {
     }
     @Test fun test_makePokemonFavorite() = runTest {
         viewModel.isFavorite.clear()
-        viewModel.selectedPokemon = FavoritesData.pokemon1
-        favoritesService.deleteFromFavorites(FavoritesData.pokemon1)
+        viewModel.selectedPokemon = PokemonData.pokemon1
+        favoritesService.deleteFromFavorites(PokemonData.pokemon1)
         viewModel.onFavoriteSelection(coroutineRule.dispatcher)
         assert(viewModel.isFavorite.getOrAwaitValue())
 
         // clear affected properties
         viewModel.isFavorite.clear()
         viewModel.selectedPokemon = Pokemon()
-        favoritesService.deleteFromFavorites(FavoritesData.pokemon1)
+        favoritesService.deleteFromFavorites(PokemonData.pokemon1)
     }
     @Test fun test_removePokemonFromFavorite() = runTest {
         viewModel.isFavorite.clear()
-        viewModel.selectedPokemon = FavoritesData.pokemon1
+        viewModel.selectedPokemon = PokemonData.pokemon1
         favoritesService.insertToFavorites(viewModel.selectedPokemon)
         viewModel.onFavoriteSelection(coroutineRule.dispatcher)
         assert(!viewModel.isFavorite.getOrAwaitValue())
@@ -98,13 +98,13 @@ class TestPreviewViewModel {
     }
     @Test fun test_onFavoritesSelectionRefreshListTrigger() = runTest {
         viewModel.isFavorite.clear()
-        viewModel.selectedPokemon = FavoritesData.pokemon1
+        viewModel.selectedPokemon = PokemonData.pokemon1
         viewModel.onFavoriteSelection(coroutineRule.dispatcher)
         assert(viewModel.returnRefreshListSignal)
         // clear affected properties
         viewModel.isFavorite.clear()
         viewModel.selectedPokemon = Pokemon()
-        favoritesService.deleteFromFavorites(FavoritesData.pokemon1)
+        favoritesService.deleteFromFavorites(PokemonData.pokemon1)
     }
 
 }

@@ -17,7 +17,7 @@ import retrofit2.Retrofit
 class TypeService(retrofit: Retrofit): TypeRepository {
 
     /** The api to reference in order to build the retrofit instance */
-    override val api = retrofit.create(TypeEndpoints::class.java)
+    val api = retrofit.create(TypeEndpoints::class.java)
 
     /**
      * Get only a specific pokemon type based on given type id

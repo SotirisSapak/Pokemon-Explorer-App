@@ -17,7 +17,7 @@ import retrofit2.Retrofit
 class PokemonService(retrofit: Retrofit): PokemonRepository {
 
     /** The api to reference in order to build the retrofit instance */
-    override val api = retrofit.create(PokemonEndpoints::class.java)
+    val api = retrofit.create(PokemonEndpoints::class.java)
 
     /**
      * Fetch [Pokemon] object based on given [endpointUrl]. This url is referenced from

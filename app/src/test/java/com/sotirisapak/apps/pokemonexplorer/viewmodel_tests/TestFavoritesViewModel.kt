@@ -1,7 +1,7 @@
 package com.sotirisapak.apps.pokemonexplorer.viewmodel_tests
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.sotirisapak.apps.pokemonexplorer.data.FavoritesData
+import com.sotirisapak.apps.pokemonexplorer.data.PokemonData
 import com.sotirisapak.apps.pokemonexplorer.services.FakeFavoritesService
 import com.sotirisapak.apps.pokemonexplorer.utilities.MainCoroutineRule
 import com.sotirisapak.apps.pokemonexplorer.utilities.getOrAwaitValue
@@ -55,8 +55,8 @@ class TestFavoritesViewModel {
     }
     @Test fun `viewModel - onInit - with favorites`() = runTest {
         // add some favorites to list
-        favoritesService.insertToFavorites(FavoritesData.pokemon1)
-        favoritesService.insertToFavorites(FavoritesData.pokemon2)
+        favoritesService.insertToFavorites(PokemonData.pokemon1)
+        favoritesService.insertToFavorites(PokemonData.pokemon2)
         viewModel.getFavorites(coroutineRule.dispatcher)
         assertEquals(2, viewModel.itemsCount.getOrAwaitValue())
         assertEquals(2, viewModel.items.getOrAwaitValue().size)
@@ -68,16 +68,16 @@ class TestFavoritesViewModel {
     }
     @Test fun `viewModel - onDelete`() = runTest {
         // add some favorites to list
-        favoritesService.insertToFavorites(FavoritesData.pokemon1)
-        favoritesService.insertToFavorites(FavoritesData.pokemon2)
+        favoritesService.insertToFavorites(PokemonData.pokemon1)
+        favoritesService.insertToFavorites(PokemonData.pokemon2)
         viewModel.getFavorites(coroutineRule.dispatcher)
         // remove pokemon1 from local storage
-        viewModel.onPokemonLongClick(FavoritesData.pokemon1)
-        assertEquals(FavoritesData.pokemon1, viewModel.longClickedPokemon.getOrAwaitValue())
-        viewModel.configureFavoriteSelectionOf(coroutineRule.dispatcher, FavoritesData.pokemon1)
+        viewModel.onPokemonLongClick(PokemonData.pokemon1)
+        assertEquals(PokemonData.pokemon1, viewModel.longClickedPokemon.getOrAwaitValue())
+        viewModel.configureFavoriteSelectionOf(coroutineRule.dispatcher, PokemonData.pokemon1)
         assertEquals(1, viewModel.itemsCount.getOrAwaitValue())
         assertEquals(1, viewModel.items.getOrAwaitValue().size)
-        assertEquals(FavoritesData.pokemon2, viewModel.items.getOrAwaitValue()[0])
+        assertEquals(PokemonData.pokemon2, viewModel.items.getOrAwaitValue()[0])
 
         // reset attributes
         viewModel.itemsCount.postValue(0)
@@ -86,12 +86,12 @@ class TestFavoritesViewModel {
     }
     @Test fun `viewModel - onRefresh`() = runTest {
         // add some favorites to list
-        favoritesService.insertToFavorites(FavoritesData.pokemon1)
-        favoritesService.insertToFavorites(FavoritesData.pokemon2)
+        favoritesService.insertToFavorites(PokemonData.pokemon1)
+        favoritesService.insertToFavorites(PokemonData.pokemon2)
         viewModel.getFavorites(coroutineRule.dispatcher)
         assertEquals(2, viewModel.itemsCount.getOrAwaitValue())
         assertEquals(2, viewModel.items.getOrAwaitValue().size)
-        favoritesService.insertToFavorites(FavoritesData.pokemon3)
+        favoritesService.insertToFavorites(PokemonData.pokemon3)
         viewModel.refresh(coroutineRule.dispatcher)
         assertEquals(3, viewModel.itemsCount.getOrAwaitValue())
         assertEquals(3, viewModel.items.getOrAwaitValue().size)
@@ -102,8 +102,8 @@ class TestFavoritesViewModel {
         for(items in favoritesService.getFavorites()) { favoritesService.deleteFromFavorites(items) }
     }
     @Test fun `viewModel - onPokemonClick`() = runTest {
-        viewModel.onPokemonClick(FavoritesData.pokemon1)
-        assertEquals(FavoritesData.pokemon1, hostViewModel.selectedPokemon)
+        viewModel.onPokemonClick(PokemonData.pokemon1)
+        assertEquals(PokemonData.pokemon1, hostViewModel.selectedPokemon)
     }
 
 }

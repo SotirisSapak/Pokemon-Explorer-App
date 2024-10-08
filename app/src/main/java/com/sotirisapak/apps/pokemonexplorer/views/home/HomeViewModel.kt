@@ -1,6 +1,7 @@
 package com.sotirisapak.apps.pokemonexplorer.views.home
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
@@ -11,58 +12,35 @@ import com.sotirisapak.apps.pokemonexplorer.models.Type
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.backend.models.PokemonType
-import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.PokemonService
-import com.sotirisapak.libs.pokemonexplorer.backend.remote.services.TypeService
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.repositories.PokemonRepository
+import com.sotirisapak.libs.pokemonexplorer.backend.remote.repositories.TypeRepository
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.clear
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.nonNullValue
-import com.sotirisapak.libs.pokemonexplorer.core.extensions.onBackground
-import com.sotirisapak.libs.pokemonexplorer.core.extensions.onUiThread
 import com.sotirisapak.libs.pokemonexplorer.core.extensions.set
 import com.sotirisapak.libs.pokemonexplorer.core.lifecycle.ViewModelBase
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 import com.sotirisapak.libs.pokemonexplorer.di.PokemonApplication
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel implementation for [HomeFragment]
  * @param hostViewModel the [HostViewModel] instance to manipulate [HostViewModel.selectedPokemon] property
- * @param typeService the api service to provide methods to manage pokemon types
- * @param pokemonService the api service to provide methods to manage pokemon
+ * @param typeRepository the api service to provide methods to manage pokemon types
+ * @param pokemonRepository the api service to provide methods to manage pokemon
  * @author SotirisSapak
  * @since 1.0.0
  */
 class HomeViewModel(
     private val hostViewModel: HostViewModel,
-    private val typeService: TypeService,
-    private val pokemonService: PokemonService
+    private val typeRepository: TypeRepository,
+    private val pokemonRepository: PokemonRepository
 ): ViewModelBase() {
 
     // ? ==========================================================================================
     // ? Nested classes for better organization
     // ? ==========================================================================================
-    /**
-     * Class to provide all adapters to [HomeViewModel] as a group
-     * @author SotirisSapak
-     * @since 1.0.0
-     */
-    inner class Adapters {
-        val typeAdapter = TypeAdapter { _, selectedType ->
-            // to avoid re-creating adapter when the already selected list is clicked again,
-            // we should make program remember if the selected type is the one which is clicked
-            if(selectedPokemonType != selectedType) {
-                selectedPokemonType = selectedType
-                finishJobIfActive()
-                loadTypeData()
-            }
-        }
-        val pokemonAdapter = PokemonAdapter(
-            onPokemonClick = { _, clickedPokemon ->
-                hostViewModel.selectedPokemon = clickedPokemon
-                finishJobIfActive()
-                // trigger a signal to view to go to preview fragment
-                properties.proceed.set()
-            }
-        )
-    }
 
     /**
      * Class to provide pagination attributes
@@ -108,37 +86,37 @@ class HomeViewModel(
     // ? ==========================================================================================
 
     /**
+     * The [Type] instances to bind into recyclerView
+     */
+    val types = MutableLiveData<MutableList<Type>>()
+
+    /**
      * The pokemon list as standard information in a private list. This list, will be used to hold all the pokemon
      * fetched from the selected type, before any pagination applied and actual pokemon fetching via
      * [PokemonType.TypePokemon.PokemonInformation.url]
      */
-    private val pokemonTypes = mutableListOf<PokemonType.TypePokemon>()
+    val pokemonTypes = mutableListOf<PokemonType.TypePokemon>()
 
     /**
      * The list of pokemon to hold all the fetched data from api. This list will hold all pokemon
      * and with the use of pagination technique, will save only a small junk of data
      */
-    private val pokemonList = mutableListOf<Pokemon>()
+    val pokemonList = MutableLiveData<MutableList<Pokemon>>()
 
     /**
      * Variable to hold a state for the type adapter to prevent reload current selected type its data.
      * @see TypeAdapter
      */
-    private var selectedPokemonType = Type()
+    var selectedPokemonType = Type()
 
     // ? ------------------------
     // ? Class instances
     // ? ------------------------
 
     /**
-     * Instance of [Adapters] class
-     */
-    val adapters = Adapters()
-
-    /**
      * Instance of [Pagination] class
      */
-    private val paginationProperties = Pagination()
+    val paginationProperties = Pagination()
 
     // ? ==========================================================================================
     // ? Ui thread methods
@@ -147,13 +125,16 @@ class HomeViewModel(
     init { onInit() }
 
     /**
+     *
+     * __TEST READY__
+     *
      * We need to set firstly, the 10 most famous categories of pokemon. These categories will
      * be saved as [Type] which is a standard model for pokemon categories before fetching its
      * data which will be saved as [PokemonType] objects.
      * @author SotirisSapak
      * @since 1.0.0
      */
-    private fun onInit() {
+    fun onInit(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
         val arrayOfTypes = mutableListOf(
             Type(9, "Steel", true),
             Type(10, "Fire"),
@@ -165,17 +146,52 @@ class HomeViewModel(
             Type(17, "Dark"),
             Type(18, "Fairy")
         )
-        // clear adapters just in case!
-        adapters.typeAdapter.submitList(emptyList())
-        adapters.pokemonAdapter.submitList(emptyList())
+        // clear lists just in case!
+        // types.value = mutableListOf()
+        // pokemonList.value = mutableListOf()
 
-        // attach the standard types to typeAdapter to show as options within the recyclerView via
+        // attach the standard types to show as options within the recyclerView via
         // dataBinding
-        adapters.typeAdapter.submitList(arrayOfTypes)
+        types.value = arrayOfTypes
         // Now, we have to fetch the data for the selected type which is the "Steel".
         selectedPokemonType = arrayOfTypes[0]
         // fetch all data for "Steel"
-        loadTypeData()
+        loadTypes(dispatcher)
+    }
+
+    /**
+     *
+     * __TEST READY__
+     *
+     * Click listener for [TypeAdapter] interaction to trigger an action when user click on a pokemon
+     * type.
+     * @param selectedType the [Type] instance to be clicked
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun onTypeClick(dispatcher: CoroutineDispatcher = Dispatchers.IO, selectedType: Type) {
+        // to avoid re-creating adapter when the already selected list is clicked again,
+        // we should make program remember if the selected type is the one which is clicked
+        if(selectedPokemonType != selectedType) {
+            selectedPokemonType = selectedType
+            finishJobIfActive()
+            loadTypes(dispatcher)
+        }
+    }
+
+
+    /**
+     * Click listener for [PokemonAdapter] interaction to trigger an action when user click on a pokemon
+     * from list.
+     * @param clickedPokemon the [Pokemon] instance to be clicked
+     * @author SotirisSapak
+     * @since 1.0.0
+     */
+    fun onPokemonClick(clickedPokemon: Pokemon){
+        hostViewModel.selectedPokemon = clickedPokemon
+        finishJobIfActive()
+        // trigger a signal to view to go to preview fragment
+        properties.proceed.set()
     }
 
     // ? ==========================================================================================
@@ -185,48 +201,50 @@ class HomeViewModel(
     /**
      * __TAG__ -> [TAG_FETCH_SELECTED_TYPE_DATA]
      *
+     * __TEST READY__
+     *
      * Method to fetch the data of the selected type. No need to pass a parameter cause the [selectedPokemonType]
      * will be used to fetch its data.
      *
      * Hint: This method will use the [newJob] method to generate a new coroutine job within [viewModelScope].
+     *
+     * @param dispatcher the dispatcher to execute the coroutine task (default is [Dispatchers.IO])
      * @author SotirisSapak
      * @since 1.0.0
      */
-
-    private fun loadTypeData() = newApiJob(
-        tag = TAG_FETCH_SELECTED_TYPE_DATA,
-        action = {
-            /*
-                This process will perform the task for fetching the selected type information. When any
-                type is selected, then we have to remove any pokemon left in pokemonList and reset the
-                pokemon adapter accordingly
-            */
-            onUiThread {
-                // reset pagination index
-                paginationProperties.index = 0
-                // set process to true and error to false to avoid ui overlay
-                properties.progress.set()
-                properties.error.clear()
-                // reset pokemon list and adapter cause we have selected a new type
-                pokemonList.clear()
-                adapters.pokemonAdapter.submitList(pokemonList)
-            }
-            typeService.getTypeById(selectedPokemonType.id)
-        },
-        after = { successResponse ->
-            // add fetched types to viewModel list if is not empty
-            if (successResponse.pokemonList.isEmpty()) {
-                // Ahhh, for some reason, the list of pokemon is empty...unknown reason
-                properties.progress.clear()
-                properties.error.set("Unknown reason for not fetching pokemon for \"${successResponse.name}\"")
-            } else {
-                // add pokemon list to types after removing all previous items
-                pokemonTypes.clear()
-                pokemonTypes.addAll(successResponse.pokemonList)
-                fetchPokemon()
+    fun loadTypes(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+        // remove job if is open
+        finishJobIfActive()
+        // reset progress and errors
+        properties.progress.set()
+        properties.error.clear()
+        // reset pagination index
+        paginationProperties.index = 0
+        // reset pokemon list and adapter cause we have selected a new type
+        pokemonList.value = mutableListOf()
+        // start the process
+        properties.job = viewModelScope.launch(dispatcher) {
+            when(val response = typeRepository.getTypeById(selectedPokemonType.id)) {
+                is ApiResult.Failure -> {
+                    properties.progress.postValue(false)
+                    properties.error.postValue(response.error)
+                }
+                is ApiResult.Success -> {
+                    // check if response return an empty list
+                    if(response.data.pokemonList.isEmpty()) {
+                        // stop the process
+                        properties.progress.postValue(false)
+                        properties.error.postValue("Unknown reason for not fetching pokemon for type \"${selectedPokemonType.name}\"")
+                    } else {
+                        // continue by fetching pokemon information
+                        pokemonTypes.clear()
+                        pokemonTypes.addAll(response.data.pokemonList)
+                        fetchPokemonList()
+                    }
+                }
             }
         }
-    ) {}
+    }
 
     /**
      * __TAG__ -> [TAG_FETCH_POKEMON]
@@ -240,30 +258,31 @@ class HomeViewModel(
      * @author SotirisSapak
      * @since 1.0.0
      */
-    private suspend fun fetchPokemon() {
-        properties.progress.set()
-        onBackground {
-            val paginatedList = configurePagination(pokemonTypes)
-            // now, handle pokemon pagination fetching using fetchPokemon() method
-            paginatedList.forEach { item ->
-                when(val response = pokemonService.getPokemonByUrl(item.pokemonInformation.url)) {
-                    is ApiResult.Failure -> onUiThread {}
-                    is ApiResult.Success -> onUiThread { pokemonList.add(response.data) }
-                }
+
+    private suspend fun fetchPokemonList() {
+        // configure viewModel properties
+        properties.progress.postValue(true)
+        properties.error.postValue("")
+        // configure pagination before executing
+        val paginatedList = configurePagination(pokemonTypes)
+        // create a new list to add the result
+        val resultList = mutableListOf<Pokemon>()
+        // begin execution
+        paginatedList.forEach { item ->
+            when(val response = pokemonRepository.getPokemonByUrl(item.pokemonInformation.url)) {
+                is ApiResult.Failure -> { /* ignore this pokemon */ }
+                is ApiResult.Success -> { resultList.add(response.data) }
             }
         }
-        onUiThread {
-            // check if data is empty or not
-            if(pokemonList.isEmpty()) {
-                properties.error.set("Cannot find pokemon on ${selectedPokemonType.name} type")
-                Log.e(TAG_FETCH_POKEMON, "Cannot find pokemon on ${selectedPokemonType.name} type")
-            } else {
-                // set the result to adapter
-                adapters.pokemonAdapter.submitList(pokemonList)
-            }
-            // clear progress
-            properties.progress.clear()
+        // check if the result list is empty
+        if(resultList.isNotEmpty()) {
+            // submit fetched list to liveData list to trigger the view observer to bind the adapter
+            val previousListItems = pokemonList.value?.toMutableList() ?: mutableListOf()
+            previousListItems.addAll(resultList)
+            pokemonList.postValue(previousListItems)
         }
+        // stop the process
+        properties.progress.postValue(false)
     }
 
 
@@ -278,17 +297,6 @@ class HomeViewModel(
      * @since 1.0.0
      */
     private fun <T> configurePagination(listToPaginate: List<T>): List<T> {
-        val tag = TAG_FETCH_POKEMON
-        Log.d(tag, "---------------------------------------------------------------")
-        Log.d(tag, "Configure pagination")
-        Log.d(tag, "---------------------------------------------------------------")
-        Log.d(tag, "Total items: ${listToPaginate.count()}")
-        Log.d(tag, "Current index: ${paginationProperties.index}")
-        Log.d(tag, "Add ${paginationProperties.index} more items")
-        Log.d(tag, "---------------------------")
-        Log.d(tag, "Begin pagination...")
-
-
         // create a new list to use in pagination as result
         val resultList = mutableListOf<T>()
         // counter for the pagination loop process to stop when loop index stops at pagination offset
@@ -300,39 +308,42 @@ class HomeViewModel(
             paginationProperties.index++
             if(count == paginationProperties.offset) break
         }
-
-
-        Log.d(tag, "Pagination completed")
-        Log.d(tag, "---------------------------")
-        Log.d(tag, "Results")
-        Log.d(tag, "---------------------------")
-        Log.d(tag, "Current index: ${paginationProperties.index}")
-        Log.d(tag, "---------------------------")
-
         return resultList
     }
 
     /**
      * __TAG__ -> [TAG_FETCH_MORE_POKEMON]
      *
+     * __TEST READY__
+     *
      * When user reaches the end of the list, this method will be triggered in order to fetch more
      * pokemon filter by selected type using pagination
+     * @param dispatcher the dispatcher to execute the coroutine task (default is [Dispatchers.IO])
      * @author SotirisSapak
      * @since 1.0.0
      */
-    fun loadMoreData() = newJob(TAG_FETCH_MORE_POKEMON){
+    fun loadMoreData(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
         // check if is in progress state and if is then do not re-fetch again
-        if(!properties.progress.nonNullValue) fetchPokemon()
+        if(properties.progress.nonNullValue) return
+        finishJobIfActive()
+        properties.job = viewModelScope.launch(dispatcher) { fetchPokemonList() }
     }
 
     /**
-     * Refresh list using [loadTypeData] method
+     *
+     * __TEST READY__
+     *
+     * Refresh list using [loadTypes] method
+     * @param dispatcher the dispatcher to execute the coroutine task (default is [Dispatchers.IO])
      * @author SotirisSapak
      * @since 1.0.0
      */
-    fun refresh() = loadTypeData()
+    fun refresh(dispatcher: CoroutineDispatcher = Dispatchers.IO) = loadTypes(dispatcher)
 
     /**
+     *
+     * __TEST READY__
+     *
      * Method to trigger a refresh only if list is empty.
      *
      * __UseCase:__
@@ -343,19 +354,18 @@ class HomeViewModel(
      * start fetching process again. To avoid this, favorites fragment should send a trigger when
      * user go back and if list is empty then application should restart fetching pokemon from this
      * selected category.
-     *
+     * @param dispatcher the dispatcher to execute the coroutine task (default is [Dispatchers.IO])
      * @author SotirisSapak
      * @since 1.0.0
      */
-    fun refreshIfEmpty() {
+    fun refreshIfEmpty(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
         // pokemon list may not be empty but list is not properly bind if pokemonList items is lower
         // than the offset of the pagination...
         // Example:
         // Stop process when pokemonList has 15 items
         // Offset = 20
         // List is not bind
-        Log.d("refreshIfEmpty", "Pokemon list count: ${pokemonList.count()}")
-        if(pokemonList.count() < paginationProperties.offset) loadTypeData()
+        if(pokemonList.value?.count()!! < paginationProperties.offset) loadTypes(dispatcher)
     }
 
 

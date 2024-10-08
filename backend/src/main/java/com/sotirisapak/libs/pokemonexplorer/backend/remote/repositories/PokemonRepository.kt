@@ -2,7 +2,6 @@ package com.sotirisapak.libs.pokemonexplorer.backend.remote.repositories
 
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 import com.sotirisapak.libs.pokemonexplorer.backend.models.PokemonType
-import com.sotirisapak.libs.pokemonexplorer.backend.remote.endpoints.PokemonEndpoints
 import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
 
 /**
@@ -11,9 +10,6 @@ import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
  * @since 1.0.0
  */
 interface PokemonRepository {
-
-    /** The api to reference in order to build the retrofit instance */
-    val api: PokemonEndpoints
 
     /**
      * Fetch [Pokemon] object based on given [endpointUrl]. This url is referenced from

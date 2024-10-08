@@ -3,9 +3,9 @@ package com.sotirisapak.apps.pokemonexplorer.data
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 
 /**
- * Dataset for favorites list
+ * Dataset for pokemon list
  */
-object FavoritesData {
+object PokemonData {
 
     val pokemon1 = Pokemon(
         id = 1,
@@ -26,8 +26,17 @@ object FavoritesData {
         )
     )
     val pokemon3 = Pokemon(
-        id = 1,
+        id = 3,
         name = "pokemon3",
+        weight = 200,
+        height = 380,
+        stats = listOf(
+            Pokemon.Stats(baseStat = 30, stat = Pokemon.Stats.Stat(statName = "hp"))
+        )
+    )
+    val pokemon4 = Pokemon(
+        id = 4,
+        name = "pokemon4",
         weight = 200,
         height = 380,
         stats = listOf(
@@ -37,6 +46,6 @@ object FavoritesData {
 
     private val emptyList = mutableListOf<Pokemon>()
     private val listWithOnlyPokemon1 = mutableListOf(pokemon1)
-    private val listWithAllPokemon = mutableListOf(pokemon1, pokemon2, pokemon3)
+    private val listWithAllPokemon = mutableListOf(pokemon1, pokemon2, pokemon3, pokemon4)
 
 }

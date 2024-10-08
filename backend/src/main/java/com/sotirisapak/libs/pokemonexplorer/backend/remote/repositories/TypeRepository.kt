@@ -12,9 +12,6 @@ import com.sotirisapak.libs.pokemonexplorer.core.models.ApiResult
  */
 interface TypeRepository {
 
-    /** The api to reference in order to build the retrofit instance */
-    val api: TypeEndpoints
-
     /**
      * Get only a specific pokemon type based on given type id
      * @param id the type id to fetch its data
