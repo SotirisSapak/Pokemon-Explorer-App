@@ -61,8 +61,6 @@ dependencies {
     implementation(libs.coroutines.android)
     // ? Kotlin coroutines core features
     implementation(libs.coroutines.android.core)
-    // ? Kotlin coroutines test support
-    implementation(libs.coroutines.test)
     // ? Basic android fragment support
     implementation(libs.fragment.ktx)
     // ? Basic android navigation ui support for android studio auto-generated code
@@ -90,8 +88,12 @@ dependencies {
     implementation(project(":framework"))
     implementation(project(":di"))
     implementation(project(":backend"))
+
     // ? Testing libraries
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

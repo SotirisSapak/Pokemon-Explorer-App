@@ -97,7 +97,7 @@ open class ViewModelBase: ViewModel() {
     fun finishJobIfActive() {
         if(properties.job.isActive) {
             properties.job.cancel()
-            properties.progress.clear()
+            properties.progress.postValue(false)
         }
     }
 
@@ -122,7 +122,6 @@ open class ViewModelBase: ViewModel() {
             try {
                 action.invoke(tag)
             } catch (ex: Exception) {
-                Log.e(tag, ex.message ?: "Unknown error")
                 if(notifyException) properties.error.set(ex.message ?: "Unknown error")
             }
         }

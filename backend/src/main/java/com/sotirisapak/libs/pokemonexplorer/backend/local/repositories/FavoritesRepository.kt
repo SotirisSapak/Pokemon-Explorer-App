@@ -1,20 +1,13 @@
-package com.sotirisapak.libs.pokemonexplorer.backend.local.services
+package com.sotirisapak.libs.pokemonexplorer.backend.local.repositories
 
-import com.sotirisapak.libs.pokemonexplorer.backend.local.databases.FavoriteDatabase
-import com.sotirisapak.libs.pokemonexplorer.backend.local.repositories.FavoritesRepository
 import com.sotirisapak.libs.pokemonexplorer.backend.models.Pokemon
 
 /**
- * The service to use in any viewModel to manipulate local database for favorite pokemon list.
+ * Repository template for pokemon favorites utilities
  * @author SotirisSapak
  * @since 1.0.0
  */
-class FavoritesService(favoriteDatabase: FavoriteDatabase): FavoritesRepository {
-
-    /**
-     * The dao interface
-     */
-    private val dao = favoriteDatabase.favoritesDao()
+interface FavoritesRepository {
 
     /**
      * Get all favorites from local storage. This method will return an empty list instead of a null
@@ -23,7 +16,7 @@ class FavoritesService(favoriteDatabase: FavoriteDatabase): FavoritesRepository 
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override suspend fun getFavorites(): List<Pokemon> = dao.getAll() ?: emptyList()
+    suspend fun getFavorites(): List<Pokemon>
 
     /**
      * Private method to be used in [isFavorite] method. Will return a specific pokemon instance from
@@ -33,7 +26,7 @@ class FavoritesService(favoriteDatabase: FavoriteDatabase): FavoritesRepository 
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override suspend fun getFavorite(pokemon: Pokemon): Pokemon? = dao.get(pokemon.id)
+    suspend fun getFavorite(pokemon: Pokemon): Pokemon?
 
     /**
      * Insert pokemon to favorites. You can add multiple pokemon separated by comma.
@@ -41,7 +34,7 @@ class FavoritesService(favoriteDatabase: FavoriteDatabase): FavoritesRepository 
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override suspend fun insertToFavorites(vararg pokemon: Pokemon) = dao.insert(*pokemon)
+    suspend fun insertToFavorites(vararg pokemon: Pokemon)
 
     /**
      * Delete [pokemon] from favorites.
@@ -49,7 +42,7 @@ class FavoritesService(favoriteDatabase: FavoriteDatabase): FavoritesRepository 
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override suspend fun deleteFromFavorites(pokemon: Pokemon) = dao.delete(pokemon)
+    suspend fun deleteFromFavorites(pokemon: Pokemon)
 
     /**
      * Check if given [pokemon] exists in favorites.
@@ -58,9 +51,6 @@ class FavoritesService(favoriteDatabase: FavoriteDatabase): FavoritesRepository 
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override suspend fun isFavorite(pokemon: Pokemon): Boolean {
-        val response = getFavorite(pokemon)
-        return response != null
-    }
-    
+    suspend fun isFavorite(pokemon: Pokemon): Boolean
+
 }

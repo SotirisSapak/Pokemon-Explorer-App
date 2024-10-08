@@ -11,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.sotirisapak.apps.pokemonexplorer.R
+import com.sotirisapak.apps.pokemonexplorer.adapters.PokemonAdapter
+import com.sotirisapak.apps.pokemonexplorer.adapters.TypeAdapter
 import com.sotirisapak.apps.pokemonexplorer.databinding.FragmentHomeBinding
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostActivity
 import com.sotirisapak.apps.pokemonexplorer.views.host.HostViewModel
@@ -29,6 +31,10 @@ import com.sotirisapak.libs.pokemonexplorer.framework.topRoundedInsets
  */
 class HomeFragment : FragmentBase<FragmentHomeBinding>() {
 
+    // ? ==========================================================================================
+    // ? ViewModels
+    // ? ==========================================================================================
+
     /**
      * Cause [HomeFragment] is a nested fragment into [HostActivity], we are able to bind the host
      * viewmodel into any nested fragment
@@ -37,6 +43,22 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
 
     /** ViewModel instance of this fragment */
     private val viewModel: HomeViewModel by viewModels { HomeViewModel.factory(hostViewModel) }
+
+    // ? ==========================================================================================
+    // ? Adapters
+    // ? ==========================================================================================
+
+    /**
+     * Adapter to bind the recyclerView related to pokemon types
+     */
+    private val typeAdapter = TypeAdapter { _, selectedType -> viewModel.onTypeClick(selectedType = selectedType) }
+
+    /**
+     * Adapter to bind the recyclerView related to pokemon
+     */
+    private val pokemonAdapter = PokemonAdapter(onPokemonClick = { _, clickedPokemon ->
+        viewModel.onPokemonClick(clickedPokemon)
+    })
 
     /**
      * You have to inflate your dataBinding class as below:
@@ -104,7 +126,9 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     ) {
         // ? ------------ Utilities ------------
         attachLayoutInsets()
+        attachAdaptersToRecyclerViews()
         // ? ------------ Observers ------------
+        observeAdapters()
         observerForProceed()
         observerForOnFavoritesBack()
         // ? ------------ Listeners ------------
@@ -131,6 +155,10 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
         binding.layoutHeader.topRoundedInsets()
         binding.layoutContainerLinear.bottomRoundedInsets()
     }
+    private fun attachAdaptersToRecyclerViews() {
+        binding.recyclerViewTypes.adapter = typeAdapter
+        binding.recyclerViewPokemon.adapter = pokemonAdapter
+    }
 
 
     // ? ==========================================================================================
@@ -150,7 +178,10 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
         Log.d("observerForOnFavoritesBack", "Value of \"onFavoritesBack\": $it")
         if(it) viewModel.refreshIfEmpty()
     }
-
+    private fun observeAdapters() {
+        observe(viewModel.types) { items -> typeAdapter.submitList(items) }
+        observe(viewModel.pokemonList) { items -> pokemonAdapter.submitList(items) }
+    }
     // ? ==========================================================================================
     // ? Listeners
     // ? ==========================================================================================

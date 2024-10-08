@@ -121,7 +121,7 @@
 
                         <!-- A recycler view to preview the categories (types) -->
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerViewItems"
+                            android:id="@+id/recyclerViewTypes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
@@ -132,8 +132,7 @@
                             android:paddingEnd="15dp"
                             android:paddingVertical="7dp"
                             tools:listitem="@layout/rv_item_type"
-                            tools:itemCount="10"
-                            android:adapter="@{viewModel.adapters.typeAdapter}" />
+                            tools:itemCount="10" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -152,7 +151,6 @@
                         android:clipToPadding="false"
                         android:paddingTop="10dp"
                         tools:listitem="@layout/rv_item_pokemon"
-                        android:adapter="@{viewModel.adapters.pokemonAdapter}"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
                     <!-- The progress indicator -->
