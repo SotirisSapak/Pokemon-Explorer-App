@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -51,6 +54,8 @@ dependencies {
     // ? For room database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    // ? For aptabase analytics sdk
+    implementation(libs.aptabase.kotlin)
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.room.compiler)    // not using KSP due to lack of dataBinding support
     // ? Local libraries dependencies

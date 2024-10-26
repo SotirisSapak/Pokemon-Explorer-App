@@ -2,6 +2,7 @@ package com.sotirisapak.libs.pokemonexplorer.di
 
 import android.app.Application
 import androidx.room.Room
+import com.aptabase.Aptabase
 import com.sotirisapak.libs.pokemonexplorer.backend.remote.PokemonApi
 import com.sotirisapak.libs.pokemonexplorer.backend.local.databases.FavoriteDatabase
 import com.sotirisapak.libs.pokemonexplorer.backend.local.services.FavoritesService

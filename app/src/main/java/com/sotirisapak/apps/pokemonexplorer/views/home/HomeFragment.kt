@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.aptabase.Aptabase
+import com.sotirisapak.apps.pokemonexplorer.BuildConfig
 import com.sotirisapak.apps.pokemonexplorer.R
 import com.sotirisapak.apps.pokemonexplorer.adapters.PokemonAdapter
 import com.sotirisapak.apps.pokemonexplorer.adapters.TypeAdapter
@@ -51,12 +53,22 @@ class HomeFragment : FragmentBase<FragmentHomeBinding>() {
     /**
      * Adapter to bind the recyclerView related to pokemon types
      */
-    private val typeAdapter = TypeAdapter { _, selectedType -> viewModel.onTypeClick(selectedType = selectedType) }
+    private val typeAdapter = TypeAdapter { _, selectedType ->
+        Aptabase.instance.trackEvent(
+            eventName = "selected_pokemon_category",
+            props = mapOf("category" to "(${selectedType.id}) ${selectedType.name}")
+        )
+        viewModel.onTypeClick(selectedType = selectedType)
+    }
 
     /**
      * Adapter to bind the recyclerView related to pokemon
      */
     private val pokemonAdapter = PokemonAdapter(onPokemonClick = { _, clickedPokemon ->
+        Aptabase.instance.trackEvent(
+            eventName = "selected_pokemon",
+            props = mapOf("pokemon" to clickedPokemon.name)
+        )
         viewModel.onPokemonClick(clickedPokemon)
     })
 

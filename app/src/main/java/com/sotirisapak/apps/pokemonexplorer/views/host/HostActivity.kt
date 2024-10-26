@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.viewModels
+import com.aptabase.Aptabase
+import com.sotirisapak.apps.pokemonexplorer.BuildConfig
 import com.sotirisapak.apps.pokemonexplorer.databinding.ActivityHostBinding
 import com.sotirisapak.libs.pokemonexplorer.core.app.ActivityBase
 
@@ -73,6 +75,11 @@ class HostActivity : ActivityBase<ActivityHostBinding>() {
      * @author SotirisSapak
      * @since 1.0.0
      */
-    override fun onCreation(savedInstanceState: Bundle?) { /* nothing to attach */ }
+    override fun onCreation(savedInstanceState: Bundle?) {
+        // initialize aptabase analytics to host activity
+        Aptabase.instance.initialize(applicationContext, BuildConfig.aptabase_api_key)
+        // send app_started event to cloud
+        Aptabase.instance.trackEvent("app_started")
+    }
 
 }

@@ -1,9 +1,22 @@
+import com.android.build.api.variant.BuildConfigField
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     // * data binding and room plugin kapt
     id("kotlin-kapt")
 }
+
+lateinit var apiKeysFile: File
+val properties = Properties()
+lateinit var inputStream: FileInputStream
+try {
+    val apiKeysFile = rootProject.file("apiKeys.properties")
+    val inputStream = FileInputStream(apiKeysFile)
+    properties.load(inputStream)
+} catch (_: Exception) {}
 
 android {
     namespace = appPkg
@@ -40,6 +53,21 @@ android {
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
     }
+
+    // provide buildConfig fields for this module
+    androidComponents {
+        onVariants { variant ->
+            variant.buildConfigFields.put(
+                "aptabase_api_key",
+                BuildConfigField(
+                    type = "String",
+                    value = "\"${properties["APTABASE_API_KEY"]}\"",
+                    comment =  ""
+                )
+            )
+        }
+    }
+
 }
 
 dependencies {
@@ -80,7 +108,8 @@ dependencies {
     implementation(libs.picasso)
     // For animations
     implementation(libs.lottie)
-
+    // ? For aptabase analytics sdk
+    implementation(libs.aptabase.kotlin)
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.room.compiler)    // not using KSP due to lack of dataBinding support
     // ? Local library dependencies
